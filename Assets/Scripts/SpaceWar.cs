@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-
-enum EClientGameState : int {
+﻿enum EClientGameState : int {
 	k_EClientGameStartServer,
 	k_EClientGameActive,
 	k_EClientGameWaitingForPlayers,
@@ -30,13 +27,3 @@ enum EClientGameState : int {
 	k_EClientClanChatRoom,
 	k_EClientWebCallback,
 }
-
-//todo: remove!
-/*class SpaceWar : MonoBehaviour {
-	private StatsAndAchievements m_StatsAndAchievements;
-
-	void Start() {
-		m_StatsAndAchievements = SteamManager.Instance.StatsAndAchievements;
-
-	}
-}*/

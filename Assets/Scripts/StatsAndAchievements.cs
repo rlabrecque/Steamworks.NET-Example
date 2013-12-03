@@ -35,6 +35,13 @@ class StatsAndAchievements : MonoBehaviour {
              new Achievement_t(Achievement.ACH_TRAVEL_FAR_SINGLE, "Orbiter", "", false, 0)
         };
 
+	private static StatsAndAchievements m_instance;
+	public static StatsAndAchievements Instance {
+		get {
+			return m_instance;
+		}
+	}
+
 	SteamManager m_SteamManager;
 
 	Callback<UserStatsReceived_t> m_CallbackUserStatsReceived;
@@ -67,11 +74,19 @@ class StatsAndAchievements : MonoBehaviour {
 	//-----------------------------------------------------------------------------
 	// Purpose: Constructor
 	//-----------------------------------------------------------------------------
+	void Awake() {
+		if (m_instance != null) {
+			Destroy(gameObject);
+			return;
+		}
+		m_instance = this;
+	}
+
 	void Start() {
 		m_SteamManager = GetComponent<SteamManager>();
 #if UNITY_EDITOR
 		if (!m_SteamManager) {
-			Debug.LogError("Don't add StatsAndAchievements to a game object yourself. Let the SteamManager add it.");
+			Debug.LogError("StatsAndAchievements must be added to the same Game Object as SteamManager.");
 		}
 #endif
 
@@ -118,14 +133,14 @@ class StatsAndAchievements : MonoBehaviour {
 	//-----------------------------------------------------------------------------
 	// Purpose: Accumulate distance traveled
 	//-----------------------------------------------------------------------------
-	void AddDistanceTraveled(float flDistance) {
+	public void AddDistanceTraveled(float flDistance) {
 		m_flGameFeetTraveled += flDistance; // todo: convert to feet!
 	}
 
 	//-----------------------------------------------------------------------------
 	// Purpose: Game state has changed
 	//-----------------------------------------------------------------------------
-	void OnGameStateChange(EClientGameState eNewState) {
+	public void OnGameStateChange(EClientGameState eNewState) {
 		if (!m_bStatsValid)
 			return;
 
@@ -167,7 +182,7 @@ class StatsAndAchievements : MonoBehaviour {
 					m_flMaxFeetTraveled = m_flGameFeetTraveled;
 
 				// Calc game duration
-				m_flGameDurationSeconds = (Time.time - m_ulTickCountGameStart) / 1000.0;
+				m_flGameDurationSeconds = Time.time - m_ulTickCountGameStart;
 
 				// We want to update stats the next frame.
 				m_bStoreStats = true;
@@ -324,5 +339,21 @@ class StatsAndAchievements : MonoBehaviour {
 				Debug.Log("Achievement '" + pCallback.m_rgchAchievementName + "' progress callback, (" + pCallback.m_nCurProgress + "," + pCallback.m_nMaxProgress + ")");
 			}
 		}
+	}
+
+	//-----------------------------------------------------------------------------
+	// Purpose: Display the user's stats and achievements
+	//-----------------------------------------------------------------------------
+	public void Render() {
+		GUILayout.Label("m_ulTickCountGameStart: " + m_ulTickCountGameStart);
+		GUILayout.Label("m_flGameDurationSeconds: " + m_flGameDurationSeconds);
+		GUILayout.Label("m_flGameFeetTraveled: " + m_flGameFeetTraveled);
+		GUILayout.Space(10);
+		GUILayout.Label("NumGames: " + m_nTotalGamesPlayed);
+		GUILayout.Label("NumWins: " + m_nTotalNumWins);
+		GUILayout.Label("NumLosses: " + m_nTotalNumLosses);
+		GUILayout.Label("FeetTraveled: " + m_flTotalFeetTraveled);
+		GUILayout.Label("MaxFeetTraveled: " + m_flMaxFeetTraveled);
+		GUILayout.Label("AverageSpeed: " + m_flAverageSpeed);
 	}
 }
