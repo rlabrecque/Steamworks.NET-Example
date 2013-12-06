@@ -12,7 +12,7 @@ class StatsAndAchievements : MonoBehaviour {
 		ACH_TRAVEL_FAR_SINGLE = 4,
 	};
 
-	struct Achievement_t {
+	class Achievement_t {
 		public Achievement m_eAchievementID;
 		public string m_rgchName;
 		public string m_rgchDescription;
@@ -280,11 +280,10 @@ class StatsAndAchievements : MonoBehaviour {
 				m_bStatsValid = true;
 
 				// load achievements
-				for (int iAch = 0; iAch < m_Achievements.Length; ++iAch) {
-					//Achievement_t ach = m_Achievements[iAch]; //todo: does this work, is it a reference or a copy?
-					SteamUserStats.GetAchievement(m_Achievements[iAch].m_eAchievementID.ToString(), out m_Achievements[iAch].m_bAchieved);
-					m_Achievements[iAch].m_rgchName = SteamUserStats.GetAchievementDisplayAttribute(m_Achievements[iAch].m_eAchievementID.ToString(), "name");
-					m_Achievements[iAch].m_rgchDescription = SteamUserStats.GetAchievementDisplayAttribute(m_Achievements[iAch].m_eAchievementID.ToString(), "desc");
+				foreach (Achievement_t ach in m_Achievements) {
+					SteamUserStats.GetAchievement(ach.m_eAchievementID.ToString(), out ach.m_bAchieved);
+					ach.m_rgchName = SteamUserStats.GetAchievementDisplayAttribute(ach.m_eAchievementID.ToString(), "name");
+					ach.m_rgchDescription = SteamUserStats.GetAchievementDisplayAttribute(ach.m_eAchievementID.ToString(), "desc");
 				}
 
 				// load stats
