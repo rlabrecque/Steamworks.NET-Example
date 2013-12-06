@@ -354,5 +354,20 @@ class StatsAndAchievements : MonoBehaviour {
 		GUILayout.Label("FeetTraveled: " + m_flTotalFeetTraveled);
 		GUILayout.Label("MaxFeetTraveled: " + m_flMaxFeetTraveled);
 		GUILayout.Label("AverageSpeed: " + m_flAverageSpeed);
+
+		GUILayout.BeginArea(new Rect(Screen.width - 300, 0, 300, 800));
+		foreach(Achievement_t ach in m_Achievements) {
+			GUILayout.Label(ach.m_eAchievementID.ToString());
+			GUILayout.Label(ach.m_rgchName + " - " + ach.m_rgchDescription);
+			GUILayout.Label("Achieved: " + ach.m_bAchieved);
+			GUILayout.Space(20);
+		}
+
+		if (GUILayout.Button("RESET STATS AND ACHIEVEMENTS")) {
+			SteamUserStats.ResetAllStats(true);
+			SteamUserStats.RequestCurrentStats();
+			OnGameStateChange(EClientGameState.k_EClientGameMenu);
+		}
+		GUILayout.EndArea();
 	}
 }

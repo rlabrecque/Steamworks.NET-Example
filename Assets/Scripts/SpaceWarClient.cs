@@ -53,11 +53,6 @@ class SpaceWarClient : MonoBehaviour {
 		if (GUILayout.Button("Travel Distance (100)")) {
 			m_StatsAndAchievements.AddDistanceTraveled(100.0f);
 		}
-		if (GUILayout.Button("RESET STATS AND ACHIEVEMENTS")) {
-			SteamUserStats.ResetAllStats(true);
-			SteamUserStats.RequestCurrentStats();
-			SetGameState(EClientGameState.k_EClientGameMenu);
-		}
 	}
 
 	//-----------------------------------------------------------------------------
