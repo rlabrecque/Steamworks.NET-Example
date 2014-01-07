@@ -24,19 +24,28 @@ class SteamManager : MonoBehaviour {
 		}
 	}
 
-
-	void Awake() {
+	private void Awake() {
 		if (m_instance != null) {
 			Destroy(gameObject);
 			return;
 		}
+		DontDestroyOnLoad(gameObject);
 
-		if (SteamAPI.RestartAppIfNecessary(AppId_t.Invalid)) {
-			// if Steam is not running or the game wasn't started through Steam, SteamAPI_RestartAppIfNecessary starts the 
-			// local Steam client and also launches this game again.
+		try {
+			if (SteamAPI.RestartAppIfNecessary(AppId_t.Invalid)) {
+				// If Steam is not running or the game wasn't started through Steam, SteamAPI_RestartAppIfNecessary starts the 
+				// local Steam client and also launches this game again.
 
-			// Once you get a public Steam AppID assigned for this game, you need to replace k_uAppIdInvalid with it and
-			// removed steam_appid.txt from the game depot.
+				// Once you get a public Steam AppID assigned for this game, you need to replace k_uAppIdInvalid with it and
+				// removed steam_appid.txt from the game depot.
+				Application.Quit();
+				return;
+			}
+		}
+		catch (System.DllNotFoundException e) { // We catch this exception here, as it will be the first
+			Debug.LogError(e.Message, this);
+			Debug.LogError("[Steamworks] Could not load [lib]steam_api.dll/so/dylib. It's likely not in the correct location. Refer to the README for more details.", this);
+
 			Application.Quit();
 			return;
 		}
@@ -48,14 +57,17 @@ class SteamManager : MonoBehaviour {
 		// This will also load the in-game steam overlay dll into your process.  That dll is normally
 		// injected by steam when it launches games, but by calling this you cause it to always load,
 		// even when not launched via steam.
-		if (!(m_bInitialized = SteamAPI.InitSafe())) {
-			Debug.LogError("SteamAPI_Init() failed");
+		m_bInitialized = SteamAPI.InitSafe();
+
+		if (!m_bInitialized) {
+			Debug.LogError("[Steamworks] SteamAPI_Init() failed", this);
 
 			Application.Quit();
 			return;
 		}
 
-		if ((m_StatsAndAchievements = GetComponent<StatsAndAchievements>()) == null) {
+		m_StatsAndAchievements = GetComponent<StatsAndAchievements>();
+		if (m_StatsAndAchievements == null) {
 			m_StatsAndAchievements = gameObject.AddComponent<StatsAndAchievements>();
 		}
 
@@ -65,16 +77,21 @@ class SteamManager : MonoBehaviour {
 		// the default position.  The API is provided in case the bottom right creates a serious conflict 
 		// with important UI in your game.
 		SteamUtils.SetOverlayNotificationPosition(ENotificationPosition.k_EPositionTopRight);
-
-		m_instance = this;
-		DontDestroyOnLoad(gameObject);
 	}
 
-	void OnApplicationQuit() {
-		SteamAPI.Shutdown();
+	private void OnEnable() {
+		if (m_instance == null) {
+			m_instance = this;
+		}
 	}
 
-	void FixedUpdate() {
+	private void OnDestroy() {
+		if (m_bInitialized) {
+			SteamAPI.Shutdown();
+		}
+	}
+
+	private void FixedUpdate() {
 		// Run Steam client callbacks
 		CallbackDispatcher.RunCallbacks();
 	}

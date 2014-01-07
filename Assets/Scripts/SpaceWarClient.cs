@@ -9,22 +9,23 @@ class SpaceWarClient : MonoBehaviour {
 			return m_instance;
 		}
 	}
-	StatsAndAchievements m_StatsAndAchievements;
+	private StatsAndAchievements m_StatsAndAchievements;
 
-	EClientGameState m_eGameState = EClientGameState.k_EClientGameMenu;
-	bool m_bTransitionedGameState = true;
-	float m_ulStateTransitionTime;
+	private EClientGameState m_eGameState = EClientGameState.k_EClientGameMenu;
+	private bool m_bTransitionedGameState = true;
+	private float m_ulStateTransitionTime;
 
-	void Awake() {
-		m_instance = this;
+	private void Start() {
+		m_StatsAndAchievements = SteamManager.Instance.StatsAndAchievements;
+
 		m_ulStateTransitionTime = Time.time;
 	}
 
-	void Start() {
-		m_StatsAndAchievements = SteamManager.Instance.StatsAndAchievements;
+	private void OnEnable() {
+		m_instance = this;
 	}
 
-	void Update() {
+	private void Update() {
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			Application.Quit();
 		}
@@ -35,7 +36,7 @@ class SpaceWarClient : MonoBehaviour {
 		}
 	}
 
-	void OnGUI() {
+	private void OnGUI() {
 		GUILayout.Label("Game State: " + m_eGameState);
 		GUILayout.Space(10);
 		m_StatsAndAchievements.Render();
@@ -58,7 +59,7 @@ class SpaceWarClient : MonoBehaviour {
 	//-----------------------------------------------------------------------------
 	// Purpose: Used to transition game state
 	//-----------------------------------------------------------------------------
-	void SetGameState(EClientGameState eState) {
+	private void SetGameState(EClientGameState eState) {
 		if (m_eGameState == eState)
 			return;
 
@@ -76,7 +77,7 @@ class SpaceWarClient : MonoBehaviour {
 	//-----------------------------------------------------------------------------
 	// Purpose: does work on transitioning from one game state to another
 	//-----------------------------------------------------------------------------
-	void OnGameStateChanged(EClientGameState eGameStateNew) {
+	private void OnGameStateChanged(EClientGameState eGameStateNew) {
 		if (m_eGameState == EClientGameState.k_EClientGameMenu) {
 			// we've switched out to the main menu
 

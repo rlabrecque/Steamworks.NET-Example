@@ -4,7 +4,7 @@ using System.ComponentModel;
 using Steamworks;
 
 class StatsAndAchievements : MonoBehaviour {
-	public enum Achievement : int {
+	private enum Achievement : int {
 		ACH_WIN_ONE_GAME = 0,
 		ACH_WIN_100_GAMES = 1,
 		ACH_HEAVY_FIRE = 2,
@@ -12,7 +12,7 @@ class StatsAndAchievements : MonoBehaviour {
 		ACH_TRAVEL_FAR_SINGLE = 4,
 	};
 
-	class Achievement_t {
+	private class Achievement_t {
 		public Achievement m_eAchievementID;
 		public string m_rgchName;
 		public string m_rgchDescription;
@@ -28,12 +28,12 @@ class StatsAndAchievements : MonoBehaviour {
 		}
 	}
 
-	static Achievement_t[] m_Achievements = new Achievement_t[] {
-             new Achievement_t(Achievement.ACH_WIN_ONE_GAME, "Winner", "", false, 0),
-             new Achievement_t(Achievement.ACH_WIN_100_GAMES, "Champion", "", false, 0),
-			 new Achievement_t(Achievement.ACH_TRAVEL_FAR_ACCUM, "Interstellar", "", false, 0),
-             new Achievement_t(Achievement.ACH_TRAVEL_FAR_SINGLE, "Orbiter", "", false, 0)
-        };
+	private Achievement_t[] m_Achievements = new Achievement_t[] {
+		new Achievement_t(Achievement.ACH_WIN_ONE_GAME, "Winner", "", false, 0),
+		new Achievement_t(Achievement.ACH_WIN_100_GAMES, "Champion", "", false, 0),
+		new Achievement_t(Achievement.ACH_TRAVEL_FAR_ACCUM, "Interstellar", "", false, 0),
+		new Achievement_t(Achievement.ACH_TRAVEL_FAR_SINGLE, "Orbiter", "", false, 0)
+	};
 
 	private static StatsAndAchievements m_instance;
 	public static StatsAndAchievements Instance {
@@ -42,68 +42,64 @@ class StatsAndAchievements : MonoBehaviour {
 		}
 	}
 
-	SteamManager m_SteamManager;
-
-	Callback<UserStatsReceived_t> m_CallbackUserStatsReceived;
-	Callback<UserStatsStored_t> m_CallbackUserStatsStored;
-	Callback<UserAchievementStored_t> m_CallbackAchievementStored;
-
 	// our GameID
-	CGameID m_GameID;
+	private CGameID m_GameID;
 
 	// Did we get the stats from Steam?
-	bool m_bRequestedStats;
-	bool m_bStatsValid;
+	private bool m_bRequestedStats;
+	private bool m_bStatsValid;
 
 	// Should we store stats this frame?
-	bool m_bStoreStats;
+	private bool m_bStoreStats;
 
 	// Current Stat details
-	float m_flGameFeetTraveled;
-	float m_ulTickCountGameStart;
-	double m_flGameDurationSeconds;
+	private float m_flGameFeetTraveled;
+	private float m_ulTickCountGameStart;
+	private double m_flGameDurationSeconds;
 
 	// Persisted Stat details
-	int m_nTotalGamesPlayed;
-	int m_nTotalNumWins;
-	int m_nTotalNumLosses;
-	float m_flTotalFeetTraveled;
-	float m_flMaxFeetTraveled;
-	float m_flAverageSpeed;
+	private int m_nTotalGamesPlayed;
+	private int m_nTotalNumWins;
+	private int m_nTotalNumLosses;
+	private float m_flTotalFeetTraveled;
+	private float m_flMaxFeetTraveled;
+	private float m_flAverageSpeed;
 
 	//-----------------------------------------------------------------------------
 	// Purpose: Constructor
 	//-----------------------------------------------------------------------------
-	void Awake() {
+	private void Awake() {
 		if (m_instance != null) {
 			Destroy(gameObject);
 			return;
 		}
-		m_instance = this;
-	}
 
-	void Start() {
-		m_SteamManager = GetComponent<SteamManager>();
 #if UNITY_EDITOR
-		if (!m_SteamManager) {
-			Debug.LogError("StatsAndAchievements must be added to the same Game Object as SteamManager.");
+		if (!GetComponent<SteamManager>()) {
+			Debug.LogError("StatsAndAchievements must be added to the same Game Object as SteamManager.", this);
 		}
 #endif
+	}
+
+	void OnEnable() {
+		if (m_instance == null) {
+			m_instance = this;
+		}
 
 		m_GameID = new CGameID(SteamUtils.GetAppID());
 
-		m_CallbackUserStatsReceived = new Callback<UserStatsReceived_t>(OnUserStatsReceived);
-		m_CallbackUserStatsStored = new Callback<UserStatsStored_t>(OnUserStatsStored);
-		m_CallbackAchievementStored = new Callback<UserAchievementStored_t>(OnAchievementStored);
+		new Callback<UserStatsReceived_t>(OnUserStatsReceived);
+		new Callback<UserStatsStored_t>(OnUserStatsStored);
+		new Callback<UserAchievementStored_t>(OnAchievementStored);
 	}
 
 	//-----------------------------------------------------------------------------
 	// Purpose: Run a frame for the CStatsAndAchievements
 	//-----------------------------------------------------------------------------
-	void FixedUpdate() {
+	private void FixedUpdate() {
 		if (!m_bRequestedStats) {
 			// Is Steam Loaded? if no, can't get stats, done
-			if (!m_SteamManager.Initialized) {
+			if (!SteamManager.Instance.Initialized) {
 				m_bRequestedStats = true;
 				return;
 			}
@@ -134,7 +130,7 @@ class StatsAndAchievements : MonoBehaviour {
 	// Purpose: Accumulate distance traveled
 	//-----------------------------------------------------------------------------
 	public void AddDistanceTraveled(float flDistance) {
-		m_flGameFeetTraveled += flDistance; // todo: convert to feet!
+		m_flGameFeetTraveled += (flDistance / 72) / 12; // PixelsToFeet() from SpaceWar
 	}
 
 	//-----------------------------------------------------------------------------
@@ -167,6 +163,7 @@ class StatsAndAchievements : MonoBehaviour {
 					m_nTotalNumWins++;
 				else
 					m_nTotalNumLosses++;
+
 				// fall through
 				goto case EClientGameState.k_EClientGameDraw;
 			case EClientGameState.k_EClientGameDraw:
@@ -194,7 +191,7 @@ class StatsAndAchievements : MonoBehaviour {
 	//-----------------------------------------------------------------------------
 	// Purpose: see if we should unlock this achievement
 	//-----------------------------------------------------------------------------
-	void EvaluateAchievement(Achievement_t achievement) {
+	private void EvaluateAchievement(Achievement_t achievement) {
 		// Already have it?
 		if (achievement.m_bAchieved)
 			return;
@@ -226,7 +223,7 @@ class StatsAndAchievements : MonoBehaviour {
 	//-----------------------------------------------------------------------------
 	// Purpose: Unlock this achievement
 	//-----------------------------------------------------------------------------
-	void UnlockAchievement(Achievement_t achievement) {
+	private void UnlockAchievement(Achievement_t achievement) {
 		achievement.m_bAchieved = true;
 
 		// the icon may change once it's unlocked
@@ -242,7 +239,7 @@ class StatsAndAchievements : MonoBehaviour {
 	//-----------------------------------------------------------------------------
 	// Purpose: Store stats in the Steam database
 	//-----------------------------------------------------------------------------
-	void StoreStatsIfNecessary() {
+	private void StoreStatsIfNecessary() {
 		if (m_bStoreStats) {
 			// already set any achievements in UnlockAchievement
 
@@ -268,8 +265,8 @@ class StatsAndAchievements : MonoBehaviour {
 	// Purpose: We have stats data from Steam. It is authoritative, so update
 	//			our data with those results now.
 	//-----------------------------------------------------------------------------
-	void OnUserStatsReceived(UserStatsReceived_t pCallback) {
-		if (!m_SteamManager.Initialized)
+	private void OnUserStatsReceived(UserStatsReceived_t pCallback) {
+		if (!SteamManager.Instance.Initialized)
 			return;
 
 		// we may get callbacks for other games' stats arriving, ignore them
@@ -303,7 +300,7 @@ class StatsAndAchievements : MonoBehaviour {
 	//-----------------------------------------------------------------------------
 	// Purpose: Our stats data was stored!
 	//-----------------------------------------------------------------------------
-	void OnUserStatsStored(UserStatsStored_t pCallback) {
+	private void OnUserStatsStored(UserStatsStored_t pCallback) {
 		// we may get callbacks for other games' stats arriving, ignore them
 		if ((ulong)m_GameID == pCallback.m_nGameID) {
 			if (EResult.k_EResultOK == pCallback.m_eResult) {
@@ -328,7 +325,7 @@ class StatsAndAchievements : MonoBehaviour {
 	//-----------------------------------------------------------------------------
 	// Purpose: An achievement was stored
 	//-----------------------------------------------------------------------------
-	void OnAchievementStored(UserAchievementStored_t pCallback) {
+	private void OnAchievementStored(UserAchievementStored_t pCallback) {
 		// we may get callbacks for other games' stats arriving, ignore them
 		if ((ulong)m_GameID == pCallback.m_nGameID) {
 			if (0 == pCallback.m_nMaxProgress) {
