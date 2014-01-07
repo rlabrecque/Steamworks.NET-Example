@@ -31,7 +31,7 @@ class SteamManager : MonoBehaviour {
 			return;
 		}
 
-		if (SteamAPI.RestartAppIfNecessary(Constants.k_uAppIdInvalid)) {
+		if (SteamAPI.RestartAppIfNecessary(AppId_t.Invalid)) {
 			// if Steam is not running or the game wasn't started through Steam, SteamAPI_RestartAppIfNecessary starts the 
 			// local Steam client and also launches this game again.
 

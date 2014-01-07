@@ -49,7 +49,7 @@ class StatsAndAchievements : MonoBehaviour {
 	Callback<UserAchievementStored_t> m_CallbackAchievementStored;
 
 	// our GameID
-	ulong m_GameID;
+	CGameID m_GameID;
 
 	// Did we get the stats from Steam?
 	bool m_bRequestedStats;
@@ -90,7 +90,7 @@ class StatsAndAchievements : MonoBehaviour {
 		}
 #endif
 
-		m_GameID = SteamUtils.GetAppID();
+		m_GameID = new CGameID(SteamUtils.GetAppID());
 
 		m_CallbackUserStatsReceived = new Callback<UserStatsReceived_t>(OnUserStatsReceived);
 		m_CallbackUserStatsStored = new Callback<UserStatsStored_t>(OnUserStatsStored);
@@ -273,7 +273,7 @@ class StatsAndAchievements : MonoBehaviour {
 			return;
 
 		// we may get callbacks for other games' stats arriving, ignore them
-		if (m_GameID == pCallback.m_nGameID) {
+		if ((ulong)m_GameID == pCallback.m_nGameID) {
 			if (EResult.k_EResultOK == pCallback.m_eResult) {
 				Debug.Log("Received stats and achievements from Steam\n");
 
@@ -305,7 +305,7 @@ class StatsAndAchievements : MonoBehaviour {
 	//-----------------------------------------------------------------------------
 	void OnUserStatsStored(UserStatsStored_t pCallback) {
 		// we may get callbacks for other games' stats arriving, ignore them
-		if (m_GameID == pCallback.m_nGameID) {
+		if ((ulong)m_GameID == pCallback.m_nGameID) {
 			if (EResult.k_EResultOK == pCallback.m_eResult) {
 				Debug.Log("StoreStats - success");
 			}
@@ -316,7 +316,7 @@ class StatsAndAchievements : MonoBehaviour {
 				// Fake up a callback here so that we re-load the values.
 				UserStatsReceived_t callback = new UserStatsReceived_t();
 				callback.m_eResult = EResult.k_EResultOK;
-				callback.m_nGameID = m_GameID;
+				callback.m_nGameID = (ulong)m_GameID;
 				OnUserStatsReceived(callback);
 			}
 			else {
@@ -330,7 +330,7 @@ class StatsAndAchievements : MonoBehaviour {
 	//-----------------------------------------------------------------------------
 	void OnAchievementStored(UserAchievementStored_t pCallback) {
 		// we may get callbacks for other games' stats arriving, ignore them
-		if (m_GameID == pCallback.m_nGameID) {
+		if ((ulong)m_GameID == pCallback.m_nGameID) {
 			if (0 == pCallback.m_nMaxProgress) {
 				Debug.Log("Achievement '" + pCallback.m_rgchAchievementName + "' unlocked!");
 			}
