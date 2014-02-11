@@ -3,6 +3,7 @@ using System.Collections;
 using System.ComponentModel;
 using Steamworks;
 
+[RequireComponent(typeof(SteamManager))]
 class StatsAndAchievements : MonoBehaviour {
 	private enum Achievement : int {
 		ACH_WIN_ONE_GAME = 0,
@@ -36,11 +37,6 @@ class StatsAndAchievements : MonoBehaviour {
 	};
 
 	private static StatsAndAchievements m_instance;
-	public static StatsAndAchievements Instance {
-		get {
-			return m_instance;
-		}
-	}
 
 	// our GameID
 	private CGameID m_GameID;
@@ -73,12 +69,6 @@ class StatsAndAchievements : MonoBehaviour {
 			Destroy(gameObject);
 			return;
 		}
-
-#if UNITY_EDITOR
-		if (!GetComponent<SteamManager>()) {
-			Debug.LogError("StatsAndAchievements must be added to the same Game Object as SteamManager.", this);
-		}
-#endif
 	}
 
 	void OnEnable() {
@@ -99,7 +89,7 @@ class StatsAndAchievements : MonoBehaviour {
 	private void FixedUpdate() {
 		if (!m_bRequestedStats) {
 			// Is Steam Loaded? if no, can't get stats, done
-			if (!SteamManager.Instance.Initialized) {
+			if (!SteamManager.Initialized) {
 				m_bRequestedStats = true;
 				return;
 			}
@@ -266,7 +256,7 @@ class StatsAndAchievements : MonoBehaviour {
 	//			our data with those results now.
 	//-----------------------------------------------------------------------------
 	private void OnUserStatsReceived(UserStatsReceived_t pCallback) {
-		if (!SteamManager.Instance.Initialized)
+		if (!SteamManager.Initialized)
 			return;
 
 		// we may get callbacks for other games' stats arriving, ignore them

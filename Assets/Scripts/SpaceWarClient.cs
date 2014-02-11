@@ -16,7 +16,7 @@ class SpaceWarClient : MonoBehaviour {
 	private float m_ulStateTransitionTime;
 
 	private void Start() {
-		m_StatsAndAchievements = SteamManager.Instance.StatsAndAchievements;
+		m_StatsAndAchievements = SteamManager.StatsAndAchievements;
 
 		m_ulStateTransitionTime = Time.time;
 	}

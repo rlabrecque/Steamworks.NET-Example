@@ -4,31 +4,29 @@ using Steamworks;
 
 class SteamManager : MonoBehaviour {
 	private static SteamManager m_instance;
-	public static SteamManager Instance {
-		get {
-			return m_instance;
-		}
-	}
 
 	private StatsAndAchievements m_StatsAndAchievements;
-	public StatsAndAchievements StatsAndAchievements {
+	public static StatsAndAchievements StatsAndAchievements {
 		get {
-			return m_StatsAndAchievements;
+			return m_instance.m_StatsAndAchievements;
 		}
 	}
 
 	private bool m_bInitialized = false;
-	public bool Initialized {
+	public static bool Initialized {
 		get {
-			return m_bInitialized;
+			return m_instance.m_bInitialized;
 		}
 	}
 
 	private void Awake() {
+		// Only one instance of Steamworks at a time!
 		if (m_instance != null) {
 			Destroy(gameObject);
 			return;
 		}
+
+		// We want our Steam Instance to persist across scenes.
 		DontDestroyOnLoad(gameObject);
 
 		try {
@@ -42,9 +40,8 @@ class SteamManager : MonoBehaviour {
 				return;
 			}
 		}
-		catch (System.DllNotFoundException e) { // We catch this exception here, as it will be the first
-			Debug.LogError(e.Message, this);
-			Debug.LogError("[Steamworks] Could not load [lib]steam_api.dll/so/dylib. It's likely not in the correct location. Refer to the README for more details.", this);
+		catch (System.DllNotFoundException e) { // We catch this exception here, as it will be the first occurence of it.
+			Debug.LogError("[Steamworks] Could not load [lib]steam_api.dll/so/dylib. It's likely not in the correct location. Refer to the README for more details.\n" + e, this);
 
 			Application.Quit();
 			return;
@@ -57,8 +54,7 @@ class SteamManager : MonoBehaviour {
 		// This will also load the in-game steam overlay dll into your process.  That dll is normally
 		// injected by steam when it launches games, but by calling this you cause it to always load,
 		// even when not launched via steam.
-		m_bInitialized = SteamAPI.InitSafe();
-
+		m_bInitialized = SteamAPI.Init();
 		if (!m_bInitialized) {
 			Debug.LogError("[Steamworks] SteamAPI_Init() failed", this);
 
@@ -93,6 +89,6 @@ class SteamManager : MonoBehaviour {
 
 	private void FixedUpdate() {
 		// Run Steam client callbacks
-		CallbackDispatcher.RunCallbacks();
+		SteamAPI.RunCallbacks();
 	}
 }
