@@ -14,17 +14,33 @@ public class RedistCopy {
 #if !DISABLEREDISTCOPY
 		string strProjectName = Path.GetFileNameWithoutExtension(pathToBuiltProject);
 
-		if (target == BuildTarget.StandaloneWindows) {
-			CopyFile("steam_api.dll", "steam_api.dll", pathToBuiltProject);
+		switch(target) {
+			case BuildTarget.StandaloneWindows:
+				CopyFile("steam_api.dll", "steam_api.dll", pathToBuiltProject);
+				break;
+			case BuildTarget.StandaloneWindows64:
+				CopyFile("steam_api64.dll", "steam_api64.dll", pathToBuiltProject);
+				break;
+			case BuildTarget.StandaloneLinux:
+				CopyFile("linux/launchscript", strProjectName, pathToBuiltProject);
+				break;
+			case BuildTarget.StandaloneLinux64:
+				CopyFile("linux/launchscript64", strProjectName, pathToBuiltProject);
+				break;
+			case BuildTarget.StandaloneLinuxUniversal:
+				CopyFile("linux/launchscriptuniversal", strProjectName, pathToBuiltProject);
+				break;
+			case BuildTarget.StandaloneOSXIntel:
+				break;
+			default:
+				Debug.Log(string.Format("[Steamworks.NET] {0} Is not a supported platform.", target));
+				return;
 		}
-		else if (target == BuildTarget.StandaloneLinux || target == BuildTarget.StandaloneLinux64 || target == BuildTarget.StandaloneLinuxUniversal) {
-			CopyFile("linux/launchscript", strProjectName, pathToBuiltProject);
-		}
-
+				
 		string controllerCfg = Path.Combine(Application.dataPath, "controller.vdf");
 		if (File.Exists(controllerCfg)) {
 			string dir = "_Data";
-			if (target == BuildTarget.StandaloneOSXIntel || target == BuildTarget.StandaloneOSXIntel64 || target == BuildTarget.StandaloneOSXUniversal) {
+			if (target == BuildTarget.StandaloneOSXIntel) {
 				dir = ".app/Contents";
 			}
 
@@ -33,7 +49,7 @@ public class RedistCopy {
 			File.Copy(controllerCfg, strFileDest);
 
 			if (!File.Exists(strFileDest)) {
-				Debug.LogWarning(System.String.Format("[Steamworks.NET] Could not copy controller.vdf into the built project. File.Copy() Failed. Place controller.vdf from the Steamworks SDK in the output dir manually."));
+				Debug.LogWarning("[Steamworks.NET] Could not copy controller.vdf into the built project. File.Copy() Failed. Place controller.vdf from the Steamworks SDK in the output dir manually.");
 			}
 		}
 #endif
@@ -49,14 +65,14 @@ public class RedistCopy {
 		}
 
 		if (!File.Exists(strSource)) {
-			Debug.LogWarning(System.String.Format("[Steamworks.NET] Could not copy {0} into the project root. {0} could not be found in '{1}'. Place {0} from the redist into the project root manually.", filename, SteamAPIRelativeLoc));
+			Debug.LogWarning(string.Format("[Steamworks.NET] Could not copy {0} into the project root. {0} could not be found in '{1}'. Place {0} from the redist into the project root manually.", filename, SteamAPIRelativeLoc));
 			return;
 		}
 
 		File.Copy(strSource, strFileDest);
 
 		if (!File.Exists(strFileDest)) {
-			Debug.LogWarning(System.String.Format("[Steamworks.NET] Could not copy {0} into the built project. File.Copy() Failed. Place {0} from the redist folder into the output dir manually.", filename));
+			Debug.LogWarning(string.Format("[Steamworks.NET] Could not copy {0} into the built project. File.Copy() Failed. Place {0} from the redist folder into the output dir manually.", filename));
 		}
 	}
 }
