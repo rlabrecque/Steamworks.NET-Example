@@ -19,6 +19,11 @@ class SteamManager : MonoBehaviour {
 		}
 	}
 
+	SteamAPIWarningMessageHook_t SteamAPIWarningMessageHook;
+	static void SteamAPIDebugTextHook(int nSeverity, System.Text.StringBuilder pchDebugText) {
+		Debug.LogWarning(pchDebugText);
+	}
+
 	private void Awake() {
 		// Only one instance of Steamworks at a time!
 		if (m_instance != null) {
@@ -62,6 +67,11 @@ class SteamManager : MonoBehaviour {
 			return;
 		}
 
+		// Set up our callback to recieve warning messages from Steam.
+		// You must launch with "-debug_steamapi" in the launch args to recieve warnings.
+		SteamAPIWarningMessageHook = new SteamAPIWarningMessageHook_t(SteamAPIDebugTextHook);
+		SteamClient.SetWarningMessageHook(SteamAPIWarningMessageHook);
+
 		m_StatsAndAchievements = GetComponent<StatsAndAchievements>();
 		if (m_StatsAndAchievements == null) {
 			m_StatsAndAchievements = gameObject.AddComponent<StatsAndAchievements>();
@@ -76,8 +86,14 @@ class SteamManager : MonoBehaviour {
 	}
 
 	private void OnEnable() {
+		// These should only get called after an Assembly reload, You should probably never Disable the Steamworks Manager yourself.
 		if (m_instance == null) {
 			m_instance = this;
+		}
+
+		if (SteamAPIWarningMessageHook == null) {
+			SteamAPIWarningMessageHook = new SteamAPIWarningMessageHook_t(SteamAPIDebugTextHook);
+			SteamClient.SetWarningMessageHook(SteamAPIWarningMessageHook);
 		}
 	}
 
