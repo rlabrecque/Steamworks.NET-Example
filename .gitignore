@@ -8,3 +8,8 @@ obj/
 *.sln
 *.userprefs
 *.suo
+
+*UnityVS*
+
+/steam_api.dll
+/steam_appid.txt
