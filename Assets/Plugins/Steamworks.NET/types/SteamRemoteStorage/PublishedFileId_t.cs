@@ -1,7 +1,14 @@
-﻿using System.Runtime.InteropServices;
+﻿// This file is provided under The MIT License as part of Steamworks.NET.
+// Copyright (c) 2013-2014 Riley Labrecque
+// Please see the included LICENSE.txt for additional information.
+
+// Changes to this file will be reverted when you update Steamworks.NET
+
+using System.Runtime.InteropServices;
 
 namespace Steamworks {
 	public struct PublishedFileId_t : System.IEquatable<PublishedFileId_t>, System.IComparable<PublishedFileId_t> {
+		public static readonly PublishedFileId_t Invalid = new PublishedFileId_t(0);
 		public ulong m_PublishedFileId;
 
 		public PublishedFileId_t(ulong value) {

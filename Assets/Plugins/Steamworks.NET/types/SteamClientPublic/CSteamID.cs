@@ -1,3 +1,9 @@
+// This file is provided under The MIT License as part of Steamworks.NET.
+// Copyright (c) 2013-2014 Riley Labrecque
+// Please see the included LICENSE.txt for additional information.
+
+// Changes to this file will be reverted when you update Steamworks.NET
+
 namespace Steamworks {
 	public struct CSteamID : System.IEquatable<CSteamID>, System.IComparable<CSteamID> {
 		public static readonly CSteamID Nil = new CSteamID();
@@ -29,7 +35,7 @@ namespace Steamworks {
 			SetEUniverse(eUniverse);
 			SetEAccountType(eAccountType);
 
-			if (eAccountType == EAccountType.k_EAccountTypeClan) {
+			if (eAccountType == EAccountType.k_EAccountTypeClan || eAccountType == EAccountType.k_EAccountTypeGameServer) {
 				SetAccountInstance(0);
 			}
 			else {

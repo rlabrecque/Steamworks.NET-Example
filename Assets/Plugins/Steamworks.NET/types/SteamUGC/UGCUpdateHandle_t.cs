@@ -5,11 +5,11 @@
 // Changes to this file will be reverted when you update Steamworks.NET
 
 namespace Steamworks {
-	public struct UGCQueryHandle_t : System.IEquatable<UGCQueryHandle_t>, System.IComparable<UGCQueryHandle_t> {
-		public static readonly UGCQueryHandle_t Invalid = new UGCQueryHandle_t(0xffffffffffffffff);
+	public struct UGCUpdateHandle_t : System.IEquatable<UGCUpdateHandle_t>, System.IComparable<UGCUpdateHandle_t> {
+		public static readonly UGCUpdateHandle_t Invalid = new UGCUpdateHandle_t(0xffffffffffffffff);
 		public ulong m_UGCQueryHandle;
 
-		public UGCQueryHandle_t(ulong value) {
+		public UGCUpdateHandle_t(ulong value) {
 			m_UGCQueryHandle = value;
 		}
 
@@ -18,33 +18,33 @@ namespace Steamworks {
 		}
 
 		public override bool Equals(object other) {
-			return other is UGCQueryHandle_t && this == (UGCQueryHandle_t)other;
+			return other is UGCUpdateHandle_t && this == (UGCUpdateHandle_t)other;
 		}
 
 		public override int GetHashCode() {
 			return m_UGCQueryHandle.GetHashCode();
 		}
 
-		public static bool operator ==(UGCQueryHandle_t x, UGCQueryHandle_t y) {
+		public static bool operator ==(UGCUpdateHandle_t x, UGCUpdateHandle_t y) {
 			return x.m_UGCQueryHandle == y.m_UGCQueryHandle;
 		}
 
-		public static bool operator !=(UGCQueryHandle_t x, UGCQueryHandle_t y) {
+		public static bool operator !=(UGCUpdateHandle_t x, UGCUpdateHandle_t y) {
 			return !(x == y);
 		}
 
-		public static explicit operator UGCQueryHandle_t(ulong value) {
-			return new UGCQueryHandle_t(value);
+		public static explicit operator UGCUpdateHandle_t(ulong value) {
+			return new UGCUpdateHandle_t(value);
 		}
-		public static explicit operator ulong(UGCQueryHandle_t that) {
+		public static explicit operator ulong(UGCUpdateHandle_t that) {
 			return that.m_UGCQueryHandle;
 		}
 
-		public bool Equals(UGCQueryHandle_t other) {
+		public bool Equals(UGCUpdateHandle_t other) {
 			return m_UGCQueryHandle == other.m_UGCQueryHandle;
 		}
 
-		public int CompareTo(UGCQueryHandle_t other) {
+		public int CompareTo(UGCUpdateHandle_t other) {
 			return m_UGCQueryHandle.CompareTo(other.m_UGCQueryHandle);
 		}
 	}
