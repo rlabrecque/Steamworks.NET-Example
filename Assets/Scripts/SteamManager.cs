@@ -66,16 +66,6 @@ class SteamManager : MonoBehaviour {
 
 			return;
 		}
-
-		// Ensure that the user has logged into Steam. This will always return true if the game is launched
-		// from Steam, but if Steam is at the login prompt when you run your game from outside of Steam,
-		// while steam_appid.txt is present will return false.
-		if (!SteamUser.BLoggedOn()) {
-			Debug.LogError("[Steamworks.NET] Steam user must be logged in to play this game (SteamUser()->BLoggedOn() returned false).", this);
-
-			Application.Quit();
-			return;
-		}
 	}
 
 	// This should only ever get called after an Assembly reload, You should never Disable the Steamworks Manager yourself.
