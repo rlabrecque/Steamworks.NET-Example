@@ -86,7 +86,7 @@ class SteamManager : MonoBehaviour {
 		}
 	}
 
-	private void OnApplicationQuit() {
+	private void OnDestroy() {
 		if (!m_bInitialized) {
 			return;
 		}

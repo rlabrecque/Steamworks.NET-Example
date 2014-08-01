@@ -154,41 +154,34 @@ class SteamStatsAndAchievements : MonoBehaviour {
 		if (!m_bStatsValid)
 			return;
 
-		switch (eNewState) {
-			case EClientGameState.k_EClientGameActive:
-				// Reset per-game stats
-				m_flGameFeetTraveled = 0;
-				m_ulTickCountGameStart = Time.time;
-				break;
-			case EClientGameState.k_EClientGameWinner:
+		if (eNewState == EClientGameState.k_EClientGameActive) {
+			// Reset per-game stats
+			m_flGameFeetTraveled = 0;
+			m_ulTickCountGameStart = Time.time;
+		}
+		else if (eNewState == EClientGameState.k_EClientGameWinner || eNewState == EClientGameState.k_EClientGameLoser) {
+			if (eNewState == EClientGameState.k_EClientGameWinner) {
 				m_nTotalNumWins++;
-
-				// fall through
-				goto case EClientGameState.k_EClientGameDraw;
-			case EClientGameState.k_EClientGameLoser:
+			}
+			else {
 				m_nTotalNumLosses++;
+			}
 
-				// fall through
-				goto case EClientGameState.k_EClientGameDraw;
-			case EClientGameState.k_EClientGameDraw:
+			// Tally games
+			m_nTotalGamesPlayed++;
 
-				// Tally games
-				m_nTotalGamesPlayed++;
+			// Accumulate distances
+			m_flTotalFeetTraveled += m_flGameFeetTraveled;
 
-				// Accumulate distances
-				m_flTotalFeetTraveled += m_flGameFeetTraveled;
+			// New max?
+			if (m_flGameFeetTraveled > m_flMaxFeetTraveled)
+				m_flMaxFeetTraveled = m_flGameFeetTraveled;
 
-				// New max?
-				if (m_flGameFeetTraveled > m_flMaxFeetTraveled)
-					m_flMaxFeetTraveled = m_flGameFeetTraveled;
+			// Calc game duration
+			m_flGameDurationSeconds = Time.time - m_ulTickCountGameStart;
 
-				// Calc game duration
-				m_flGameDurationSeconds = Time.time - m_ulTickCountGameStart;
-
-				// We want to update stats the next frame.
-				m_bStoreStats = true;
-
-				break;
+			// We want to update stats the next frame.
+			m_bStoreStats = true;
 		}
 	}
 
@@ -317,6 +310,7 @@ class SteamStatsAndAchievements : MonoBehaviour {
 			GUILayout.Space(20);
 		}
 
+		// FOR TESTING PURPOSES ONLY!
 		if (GUILayout.Button("RESET STATS AND ACHIEVEMENTS")) {
 			SteamUserStats.ResetAllStats(true);
 			SteamUserStats.RequestCurrentStats();

@@ -7,7 +7,6 @@ enum EClientGameState {
 	k_EClientGameActive,
 	k_EClientGameWinner,
 	k_EClientGameLoser,
-	k_EClientGameDraw,
 };
 
 class SpaceWarClient : MonoBehaviour {
@@ -27,9 +26,6 @@ class SpaceWarClient : MonoBehaviour {
 		}
 		if (GUILayout.Button("Set State to Loser")) {
 			SteamManager.StatsAndAchievements.OnGameStateChange(EClientGameState.k_EClientGameLoser);
-		}
-		if (GUILayout.Button("Set State to Draw")) {
-			SteamManager.StatsAndAchievements.OnGameStateChange(EClientGameState.k_EClientGameDraw);
 		}
 		if (GUILayout.Button("Add Distance Traveled +100")) {
 			SteamManager.StatsAndAchievements.AddDistanceTraveled(100.0f);
