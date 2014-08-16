@@ -2,17 +2,26 @@ using UnityEngine;
 using System.Collections;
 using Steamworks;
 
-// This is a stripped down port of SpaceWar's Steam Integration.
-// Make sure you set SteamManager to load first in the Script Execution Order by setting it to a negative number.
-// http://docs.unity3d.com/Manual/class-ScriptExecution.html
+//
+// The SteamManager provides a base implementation of Steamworks.NET on which you can build upon.
+// It handles the basics of starting up and shutting down the SteamAPI for use.
+//
 class SteamManager : MonoBehaviour {
 	private static SteamManager m_instance;
-
-	private SteamStatsAndAchievements m_StatsAndAchievements;
-	public static SteamStatsAndAchievements StatsAndAchievements { get { return m_instance.m_StatsAndAchievements; } }
+	private static SteamManager Instance {
+		get {
+			return m_instance ??
+				(m_instance = GameObject.FindObjectOfType<SteamManager>()) ??
+				(m_instance = new GameObject("SteamManager").AddComponent<SteamManager>());
+		}
+	}
 
 	private bool m_bInitialized;
-	public static bool Initialized { get { return m_instance.m_bInitialized; } }
+	public static bool Initialized {
+		get {
+			return Instance.m_bInitialized;
+		}
+	}
 
 	private SteamAPIWarningMessageHook_t m_SteamAPIWarningMessageHook;
 	private static void SteamAPIDebugTextHook(int nSeverity, System.Text.StringBuilder pchDebugText) {
@@ -30,7 +39,9 @@ class SteamManager : MonoBehaviour {
 		// We want our SteamManager Instance to persist across scenes.
 		DontDestroyOnLoad(gameObject);
 
-		m_StatsAndAchievements = GetComponent<SteamStatsAndAchievements>();
+		if (!Packsize.Test()) {
+			Debug.LogError("[Steamworks.NET] Packsize Test returned false, the wrong version of Steamworks.NET is being run in this platform.", this);
+		}
 
 		try {
 			// If Steam is not running or the game wasn't started through Steam, SteamAPI_RestartAppIfNecessary starts the 
@@ -68,7 +79,7 @@ class SteamManager : MonoBehaviour {
 		}
 	}
 
-	// This should only ever get called after an Assembly reload, You should never Disable the Steamworks Manager yourself.
+	// This should only ever get called on first load and after an Assembly reload, You should never Disable the Steamworks Manager yourself.
 	private void OnEnable() {
 		if (m_instance == null) {
 			m_instance = this;
@@ -86,7 +97,13 @@ class SteamManager : MonoBehaviour {
 		}
 	}
 
+
+	// OnApplicationQuit gets called too early to shutdown the SteamAPI.
+	// Because the SteamManager should be persistent and never disabled or destroyed we can shutdown the SteamAPI here.
+	// Thus it is not recommended to perform any Steamworks work in other OnDestroy functions as the order of execution can not be garenteed upon Shutdown. Prefer OnDisable().
 	private void OnDestroy() {
+		m_instance = null;
+
 		if (!m_bInitialized) {
 			return;
 		}

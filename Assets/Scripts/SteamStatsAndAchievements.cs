@@ -4,8 +4,6 @@ using System.ComponentModel;
 using Steamworks;
 
 // This is a port of StatsAndAchievements.cpp from SpaceWar, the official Steamworks Example.
-
-[RequireComponent(typeof(SteamManager))]
 class SteamStatsAndAchievements : MonoBehaviour {
 	private enum Achievement : int {
 		ACH_WIN_ONE_GAME,
