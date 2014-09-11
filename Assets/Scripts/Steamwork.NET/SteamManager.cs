@@ -3,7 +3,7 @@
 // Where that dedication is not recognized you are granted a perpetual,
 // irrevokable license to copy and modify this files as you see fit.
 //
-// Version: 1.0.1
+// Version: 1.0.2
 
 using UnityEngine;
 using System.Collections;
@@ -48,6 +48,10 @@ class SteamManager : MonoBehaviour {
 			Debug.LogError("[Steamworks.NET] Packsize Test returned false, the wrong version of Steamworks.NET is being run in this platform.", this);
 		}
 
+		if (!DllCheck.Test()) {
+			Debug.LogError("[Steamworks.NET] DllCheck Test returned false, One or more of the Steamworks binaries seems to be the wrong version.", this);
+		}
+
 		try {
 			// If Steam is not running or the game wasn't started through Steam, SteamAPI_RestartAppIfNecessary starts the 
 			// Steam client and also launches this game again if the User owns it. This can act as a rudimentary form of DRM.
@@ -71,6 +75,9 @@ class SteamManager : MonoBehaviour {
 		// Some examples include:
 		// Steam Client is not running.
 		// Launching from outside of steam without a steam_appid.txt file in place.
+		// Running under a different OS User or Access level (for example running "as administrator")
+		// Valve's documentation for this is located here:
+		// https://partner.steamgames.com/documentation/getting_started
 		// https://partner.steamgames.com/documentation/example // Under: Common Build Problems
 		// https://partner.steamgames.com/documentation/bootstrap_stats // At the very bottom
 
