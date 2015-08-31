@@ -3,7 +3,7 @@
 // Where that dedication is not recognized you are granted a perpetual,
 // irrevokable license to copy and modify this files as you see fit.
 //
-// Version: 1.0.2
+// Version: 1.0.3
 
 using UnityEngine;
 using System.Collections;
@@ -13,6 +13,7 @@ using Steamworks;
 // The SteamManager provides a base implementation of Steamworks.NET on which you can build upon.
 // It handles the basics of starting up and shutting down the SteamAPI for use.
 //
+[DisallowMultipleComponent]
 class SteamManager : MonoBehaviour {
 	private static SteamManager s_instance;
 	private static SteamManager Instance {
@@ -20,6 +21,8 @@ class SteamManager : MonoBehaviour {
 			return s_instance ?? new GameObject("SteamManager").AddComponent<SteamManager>();
 		}
 	}
+
+	private static bool s_EverInialized;
 
 	private bool m_bInitialized;
 	public static bool Initialized {
@@ -40,6 +43,12 @@ class SteamManager : MonoBehaviour {
 			return;
 		}
 		s_instance = this;
+
+		if(s_EverInialized) {
+			// This is almost always an error.
+			// The most common case where this happens is the SteamManager getting desstroyed via Application.Quit() and having some code in some OnDestroy which gets called afterwards, creating a new SteamManager.
+			throw new System.Exception("Tried to Initialize the SteamAPI twice in one session!");
+		}
 
 		// We want our SteamManager Instance to persist across scenes.
 		DontDestroyOnLoad(gameObject);
@@ -89,6 +98,8 @@ class SteamManager : MonoBehaviour {
 
 			return;
 		}
+
+		s_EverInialized = true;
 	}
 
 	// This should only ever get called on first load and after an Assembly reload, You should never Disable the Steamworks Manager yourself.
