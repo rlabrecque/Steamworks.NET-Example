@@ -1,42 +1,45 @@
 // This file is provided under The MIT License as part of Steamworks.NET.
-// Copyright (c) 2013-2014 Riley Labrecque
+// Copyright (c) 2013-2015 Riley Labrecque
 // Please see the included LICENSE.txt for additional information.
 
 // Changes to this file will be reverted when you update Steamworks.NET
 
-// If we're running in the Unity Editor we need the editors platform.
-#if UNITY_EDITOR_WIN
-	#define WINDOWS_BUILD
-	#define UNITY_BUILD
-#elif UNITY_EDITOR_OSX
-	#define UNIX_BUILD
-	#define UNITY_BUILD
-// Otherwise we want the target platform.
-#elif UNITY_STANDALONE_WIN
-	#define WINDOWS_BUILD
-	#define UNITY_BUILD
-#elif UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX
-	#define UNIX_BUILD
-	#define UNITY_BUILD
-// We would like to know if you're building for Unity under an unsupported platform so that the warning below does not get triggered.
-#elif UNITY_3_5 || UNITY_4_0 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6 || UNITY_5_0 // It would be nice if Unity defined 'UNITY' or something similar.
-	#define UNITY_BUILD
-// If we're not a UNITY_BUILD:
-#elif STEAMWORKS_LIN_OSX
-	#define UNIX_BUILD
-#else
-	// We want things to work out of the box if you're just getting started on XNA/Monogame.
-	#define WINDOWS_BUILD
-	// But we would like you to be explicit about what platform we're building on.
-	#if !STEAMWORKS_WIN
-		#warning You need to define STEAMWORKS_WIN, or STEAMWORKS_LIN_OSX. Refer to the readme for more details.
+
+#if UNITY_3_5 || UNITY_4_0 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5
+	#error Unsupported Unity platform. Steamworks.NET requires Unity 4.6 or higher.
+#elif UNITY_4_6 || UNITY_5
+	#if UNITY_EDITOR_WIN || (UNITY_STANDALONE_WIN && !UNITY_EDITOR)
+		#define WINDOWS_BUILD
 	#endif
+#elif STEAMWORKS_WIN
+	#define WINDOWS_BUILD
+#elif STEAMWORKS_LIN_OSX
+	// So that we don't trigger the else.
+#else
+	#error You need to define STEAMWORKS_WIN, or STEAMWORKS_LIN_OSX. Refer to the readme for more details.
 #endif
 
-// Unity 32bit Mono on Windows crashes with ThisCall for some reason, StdCall without the 'this' ptr is the only thing that works..? 
-#if UNITY_BUILD && WINDOWS_BUILD && !UNITY_EDITOR_64 && (UNITY_EDITOR || !UNITY_64)
-	#define NOTHISPTR
+// Unity 32bit Mono on Windows crashes with ThisCall/Cdecl for some reason, StdCall without the 'this' ptr is the only thing that works..? 
+#if (UNITY_EDITOR_WIN && !UNITY_EDITOR_64) || (!UNITY_EDITOR && UNITY_STANDALONE_WIN && !UNITY_64)
+	#define STDCALL
+#elif STEAMWORKS_WIN
+	#define THISCALL
 #endif
+
+// Calling Conventions:
+// Unity x86 Windows        - StdCall (No this pointer)
+// Unity x86 Linux          - Cdecl
+// Unity x86 OSX            - Cdecl
+// Unity x64 Windows        - Cdecl
+// Unity x64 Linux          - Cdecl
+// Unity x64 OSX            - Cdecl
+// Microsoft x86 Windows    - ThisCall
+// Microsoft x64 Windows    - ThisCall
+// Mono x86 Linux           - Cdecl
+// Mono x86 OSX             - Cdecl
+// Mono x64 Linux           - Cdecl
+// Mono x64 OSX             - Cdecl
+// Mono on Windows is probably not supported.
 
 using System;
 using System.Runtime.InteropServices;
@@ -67,10 +70,18 @@ namespace Steamworks {
 		private bool m_bGameServer;
 		private readonly int m_size = Marshal.SizeOf(typeof(T));
 
+		/// <summary>
+		/// Creates a new Callback. You must be calling SteamAPI.RunCallbacks() to retrieve the callbacks.
+		/// <para>Returns a handle to the Callback. This must be assigned to a member variable to prevent the GC from cleaning it up.</para>
+		/// </summary>
 		public static Callback<T> Create(DispatchDelegate func) {
 			return new Callback<T>(func, bGameServer: false);
 		}
 
+		/// <summary>
+		/// Creates a new GameServer Callback. You must be calling GameServer.RunCallbacks() to retrieve the callbacks.
+		/// <para>Returns a handle to the Callback. This must be assigned to a member variable to prevent the GC from cleaning it up.</para>
+		/// </summary>
 		public static Callback<T> CreateGameServer(DispatchDelegate func) {
 			return new Callback<T>(func, bGameServer: true);
 		}
@@ -121,7 +132,7 @@ namespace Steamworks {
 		public void SetGameserverFlag() { m_CCallbackBase.m_nCallbackFlags |= CCallbackBase.k_ECallbackFlagsGameServer; }
 
 		private void OnRunCallback(
-#if !NOTHISPTR
+#if !STDCALL
 			IntPtr thisptr,
 #endif
 			IntPtr pvParam) {
@@ -135,7 +146,7 @@ namespace Steamworks {
 
 		// Shouldn't get ever get called here, but this is what C++ Steamworks does!
 		private void OnRunCallResult(
-#if !NOTHISPTR
+#if !STDCALL
 			IntPtr thisptr,
 #endif
 			IntPtr pvParam, bool bFailed, ulong hSteamAPICall) {
@@ -148,7 +159,7 @@ namespace Steamworks {
 		}
 
 		private int OnGetCallbackSizeBytes(
-#if !NOTHISPTR
+#if !STDCALL
 			IntPtr thisptr
 #endif
 			) {
@@ -188,6 +199,10 @@ namespace Steamworks {
 
 		private readonly int m_size = Marshal.SizeOf(typeof(T));
 
+		/// <summary>
+		/// Creates a new async CallResult. You must be calling SteamAPI.RunCallbacks() to retrieve the callback.
+		/// <para>Returns a handle to the CallResult. This must be assigned to a member variable to prevent the GC from cleaning it up.</para>
+		/// </summary>
 		public static CallResult<T> Create(APIDispatchDelegate func = null) {
 			return new CallResult<T>(func);
 		}
@@ -246,7 +261,7 @@ namespace Steamworks {
 
 		// Shouldn't get ever get called here, but this is what C++ Steamworks does!
 		private void OnRunCallback(
-#if !NOTHISPTR
+#if !STDCALL
 			IntPtr thisptr,
 #endif
 			IntPtr pvParam) {
@@ -261,7 +276,7 @@ namespace Steamworks {
 
 
 		private void OnRunCallResult(
-#if !NOTHISPTR
+#if !STDCALL
 			IntPtr thisptr,
 #endif
 			IntPtr pvParam, bool bFailed, ulong hSteamAPICall) {
@@ -274,6 +289,8 @@ namespace Steamworks {
 					CallbackDispatcher.ExceptionHandler(e);
 				}
 
+				// The official SDK sets m_hAPICall to invalid before calling the callresult function,
+				// this doesn't let us access .Handle from within the function though.
 				if (hAPICall == m_hAPICall) { // Ensure that m_hAPICall has not been changed in m_Func
 					m_hAPICall = SteamAPICall_t.Invalid; // Caller unregisters for us
 				}
@@ -281,7 +298,7 @@ namespace Steamworks {
 		}
 		
 		private int OnGetCallbackSizeBytes(
-#if !NOTHISPTR
+#if !STDCALL
 			IntPtr thisptr
 #endif
 			) {
@@ -308,7 +325,7 @@ namespace Steamworks {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	public class CCallbackBase {
+	internal class CCallbackBase {
 		public const byte k_ECallbackFlagsRegistered = 0x01;
 		public const byte k_ECallbackFlagsGameServer = 0x02;
 		public IntPtr m_vfptr;
@@ -318,19 +335,27 @@ namespace Steamworks {
 
 	[StructLayout(LayoutKind.Sequential)]
 	internal class CCallbackBaseVTable {
-#if NOTHISPTR
-		[UnmanagedFunctionPointer(CallingConvention.StdCall)]
+#if STDCALL
+		private const CallingConvention cc = CallingConvention.StdCall;
+
+		[UnmanagedFunctionPointer(cc)]
 		public delegate void RunCBDel(IntPtr pvParam);
-		[UnmanagedFunctionPointer(CallingConvention.StdCall)]
+		[UnmanagedFunctionPointer(cc)]
 		public delegate void RunCRDel(IntPtr pvParam, [MarshalAs(UnmanagedType.I1)] bool bIOFailure, ulong hSteamAPICall);
-		[UnmanagedFunctionPointer(CallingConvention.StdCall)]
+		[UnmanagedFunctionPointer(cc)]
 		public delegate int GetCallbackSizeBytesDel();
 #else
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	#if THISCALL
+		private const CallingConvention cc = CallingConvention.ThisCall;
+	#else
+		private const CallingConvention cc = CallingConvention.Cdecl;
+	#endif
+
+		[UnmanagedFunctionPointer(cc)]
 		public delegate void RunCBDel(IntPtr thisptr, IntPtr pvParam);
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		[UnmanagedFunctionPointer(cc)]
 		public delegate void RunCRDel(IntPtr thisptr, IntPtr pvParam, [MarshalAs(UnmanagedType.I1)] bool bIOFailure, ulong hSteamAPICall);
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		[UnmanagedFunctionPointer(cc)]
 		public delegate int GetCallbackSizeBytesDel(IntPtr thisptr);
 #endif
 

@@ -1,5 +1,5 @@
 // This file is provided under The MIT License as part of Steamworks.NET.
-// Copyright (c) 2013-2014 Riley Labrecque
+// Copyright (c) 2013-2015 Riley Labrecque
 // Please see the included LICENSE.txt for additional information.
 
 // Changes to this file will be reverted when you update Steamworks.NET
@@ -10,16 +10,14 @@ using System.Runtime.InteropServices;
 
 namespace Steamworks {
 	public static class Version {
-		public const string SteamworksNETVersion = "6.0.0";
-		public const string SteamworksSDKVersion = "1.32";
-		public const string SteamAPIDLLVersion = "02.59.51.43";
-		public const int SteamAPIDLLSize = 187584;
-		public const int SteamAPI64DLLSize = 208296;
+		public const string SteamworksNETVersion = "7.0.0";
+		public const string SteamworksSDKVersion = "1.34";
+		public const string SteamAPIDLLVersion = "02.89.45.04";
+		public const int SteamAPIDLLSize = 186560;
+		public const int SteamAPI64DLLSize = 206760;
 	}
 
 	public static class SteamAPI {
-		private static bool _initialized = false;
-
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------//
 		//	Steam API setup & shutdown
 		//
@@ -50,23 +48,13 @@ namespace Steamworks {
 
 		// [Steamworks.NET] This is for Ease of use, since we don't need to care about the differences between them in C#.
 		public static bool Init() {
-			if (_initialized) {
-				throw new System.Exception("Tried to Initialize Steamworks twice in one session!");
-			}
-
 			InteropHelp.TestIfPlatformSupported();
-			_initialized = NativeMethods.SteamAPI_InitSafe();
-			return _initialized;
+			return NativeMethods.SteamAPI_InitSafe();
 		}
 #else
 		public static bool Init() {
-			if (_initialized) {
-				throw new System.Exception("Tried to Initialize Steamworks twice in one session!");
-			}
-
 			InteropHelp.TestIfPlatformSupported();
-			_initialized = NativeMethods.SteamAPI_Init();
-			return _initialized;
+			return NativeMethods.SteamAPI_Init();
 		}
 #endif
 
@@ -130,18 +118,24 @@ namespace Steamworks {
 #if VERSION_SAFE_STEAM_API_INTERFACES
 		public static bool InitSafe(uint unIP, ushort usSteamPort, ushort usGamePort, ushort usQueryPort, EServerMode eServerMode, string pchVersionString) {
 			InteropHelp.TestIfPlatformSupported();
-			return NativeMethods.SteamGameServer_InitSafe(unIP, usSteamPort, usGamePort, usQueryPort, eServerMode, pchVersionString);
+			using (var pchVersionString2 = new InteropHelp.UTF8StringHandle(pchVersionString)) {
+				return NativeMethods.SteamGameServer_InitSafe(unIP, usSteamPort, usGamePort, usQueryPort, eServerMode, pchVersionString2);
+			}
 		}
 
 		// [Steamworks.NET] This is for Ease of use, since we don't need to care about the differences between them in C#.
 		public static bool Init(uint unIP, ushort usSteamPort, ushort usGamePort, ushort usQueryPort, EServerMode eServerMode, string pchVersionString) {
 			InteropHelp.TestIfPlatformSupported();
-			return NativeMethods.SteamGameServer_InitSafe(unIP, usSteamPort, usGamePort, usQueryPort, eServerMode, pchVersionString);
+			using (var pchVersionString2 = new InteropHelp.UTF8StringHandle(pchVersionString)) {
+				return NativeMethods.SteamGameServer_InitSafe(unIP, usSteamPort, usGamePort, usQueryPort, eServerMode, pchVersionString2);
+			}
 		}
 #else
 		public static bool Init(uint unIP, ushort usSteamPort, ushort usGamePort, ushort usQueryPort, EServerMode eServerMode, string pchVersionString) {
 			InteropHelp.TestIfPlatformSupported();
-			return NativeMethods.SteamGameServer_Init(unIP, usSteamPort, usGamePort, usQueryPort, eServerMode, new InteropHelp.UTF8String(pchVersionString));
+			using (var pchVersionString2 = new InteropHelp.UTF8StringHandle(pchVersionString)) {
+				return NativeMethods.SteamGameServer_Init(unIP, usSteamPort, usGamePort, usQueryPort, eServerMode, pchVersionString2);
+		`	}
 		}
 #endif
 		public static void Shutdown() {

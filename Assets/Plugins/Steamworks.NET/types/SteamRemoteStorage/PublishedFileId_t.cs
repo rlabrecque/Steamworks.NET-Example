@@ -1,10 +1,8 @@
-﻿// This file is provided under The MIT License as part of Steamworks.NET.
-// Copyright (c) 2013-2014 Riley Labrecque
+// This file is provided under The MIT License as part of Steamworks.NET.
+// Copyright (c) 2013-2015 Riley Labrecque
 // Please see the included LICENSE.txt for additional information.
 
 // Changes to this file will be reverted when you update Steamworks.NET
-
-using System.Runtime.InteropServices;
 
 namespace Steamworks {
 	public struct PublishedFileId_t : System.IEquatable<PublishedFileId_t>, System.IComparable<PublishedFileId_t> {
@@ -38,6 +36,7 @@ namespace Steamworks {
 		public static explicit operator PublishedFileId_t(ulong value) {
 			return new PublishedFileId_t(value);
 		}
+
 		public static explicit operator ulong(PublishedFileId_t that) {
 			return that.m_PublishedFileId;
 		}

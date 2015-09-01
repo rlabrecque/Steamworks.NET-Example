@@ -1,5 +1,5 @@
-﻿// This file is provided under The MIT License as part of Steamworks.NET.
-// Copyright (c) 2013-2014 Riley Labrecque
+// This file is provided under The MIT License as part of Steamworks.NET.
+// Copyright (c) 2013-2015 Riley Labrecque
 // Please see the included LICENSE.txt for additional information.
 
 // Changes to this file will be reverted when you update Steamworks.NET
@@ -35,6 +35,7 @@ namespace Steamworks {
 		public static explicit operator AccountID_t(uint value) {
 			return new AccountID_t(value);
 		}
+
 		public static explicit operator uint(AccountID_t that) {
 			return that.m_AccountID;
 		}

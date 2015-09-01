@@ -9,99 +9,99 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace Steamworks {
-	public static class SteamUGC {
+	public static class SteamGameServerUGC {
 		/// <summary>
 		/// <para> Query UGC associated with a user. Creator app id or consumer app id must be valid and be set to the current running app. unPage should start at 1.</para>
 		/// </summary>
 		public static UGCQueryHandle_t CreateQueryUserUGCRequest(AccountID_t unAccountID, EUserUGCList eListType, EUGCMatchingUGCType eMatchingUGCType, EUserUGCListSortOrder eSortOrder, AppId_t nCreatorAppID, AppId_t nConsumerAppID, uint unPage) {
-			InteropHelp.TestIfAvailableClient();
-			return (UGCQueryHandle_t)NativeMethods.ISteamUGC_CreateQueryUserUGCRequest(unAccountID, eListType, eMatchingUGCType, eSortOrder, nCreatorAppID, nConsumerAppID, unPage);
+			InteropHelp.TestIfAvailableGameServer();
+			return (UGCQueryHandle_t)NativeMethods.ISteamGameServerUGC_CreateQueryUserUGCRequest(unAccountID, eListType, eMatchingUGCType, eSortOrder, nCreatorAppID, nConsumerAppID, unPage);
 		}
 
 		/// <summary>
 		/// <para> Query for all matching UGC. Creator app id or consumer app id must be valid and be set to the current running app. unPage should start at 1.</para>
 		/// </summary>
 		public static UGCQueryHandle_t CreateQueryAllUGCRequest(EUGCQuery eQueryType, EUGCMatchingUGCType eMatchingeMatchingUGCTypeFileType, AppId_t nCreatorAppID, AppId_t nConsumerAppID, uint unPage) {
-			InteropHelp.TestIfAvailableClient();
-			return (UGCQueryHandle_t)NativeMethods.ISteamUGC_CreateQueryAllUGCRequest(eQueryType, eMatchingeMatchingUGCTypeFileType, nCreatorAppID, nConsumerAppID, unPage);
+			InteropHelp.TestIfAvailableGameServer();
+			return (UGCQueryHandle_t)NativeMethods.ISteamGameServerUGC_CreateQueryAllUGCRequest(eQueryType, eMatchingeMatchingUGCTypeFileType, nCreatorAppID, nConsumerAppID, unPage);
 		}
 
 		/// <summary>
 		/// <para> Query for the details of the given published file ids (the RequestUGCDetails call is deprecated and replaced with this)</para>
 		/// </summary>
 		public static UGCQueryHandle_t CreateQueryUGCDetailsRequest(PublishedFileId_t[] pvecPublishedFileID, uint unNumPublishedFileIDs) {
-			InteropHelp.TestIfAvailableClient();
-			return (UGCQueryHandle_t)NativeMethods.ISteamUGC_CreateQueryUGCDetailsRequest(pvecPublishedFileID, unNumPublishedFileIDs);
+			InteropHelp.TestIfAvailableGameServer();
+			return (UGCQueryHandle_t)NativeMethods.ISteamGameServerUGC_CreateQueryUGCDetailsRequest(pvecPublishedFileID, unNumPublishedFileIDs);
 		}
 
 		/// <summary>
 		/// <para> Send the query to Steam</para>
 		/// </summary>
 		public static SteamAPICall_t SendQueryUGCRequest(UGCQueryHandle_t handle) {
-			InteropHelp.TestIfAvailableClient();
-			return (SteamAPICall_t)NativeMethods.ISteamUGC_SendQueryUGCRequest(handle);
+			InteropHelp.TestIfAvailableGameServer();
+			return (SteamAPICall_t)NativeMethods.ISteamGameServerUGC_SendQueryUGCRequest(handle);
 		}
 
 		/// <summary>
 		/// <para> Retrieve an individual result after receiving the callback for querying UGC</para>
 		/// </summary>
 		public static bool GetQueryUGCResult(UGCQueryHandle_t handle, uint index, out SteamUGCDetails_t pDetails) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_GetQueryUGCResult(handle, index, out pDetails);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_GetQueryUGCResult(handle, index, out pDetails);
 		}
 
 		public static bool GetQueryUGCPreviewURL(UGCQueryHandle_t handle, uint index, out string pchURL, uint cchURLSize) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			IntPtr pchURL2 = Marshal.AllocHGlobal((int)cchURLSize);
-			bool ret = NativeMethods.ISteamUGC_GetQueryUGCPreviewURL(handle, index, pchURL2, cchURLSize);
+			bool ret = NativeMethods.ISteamGameServerUGC_GetQueryUGCPreviewURL(handle, index, pchURL2, cchURLSize);
 			pchURL = ret ? InteropHelp.PtrToStringUTF8(pchURL2) : null;
 			Marshal.FreeHGlobal(pchURL2);
 			return ret;
 		}
 
 		public static bool GetQueryUGCMetadata(UGCQueryHandle_t handle, uint index, out string pchMetadata, uint cchMetadatasize) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			IntPtr pchMetadata2 = Marshal.AllocHGlobal((int)cchMetadatasize);
-			bool ret = NativeMethods.ISteamUGC_GetQueryUGCMetadata(handle, index, pchMetadata2, cchMetadatasize);
+			bool ret = NativeMethods.ISteamGameServerUGC_GetQueryUGCMetadata(handle, index, pchMetadata2, cchMetadatasize);
 			pchMetadata = ret ? InteropHelp.PtrToStringUTF8(pchMetadata2) : null;
 			Marshal.FreeHGlobal(pchMetadata2);
 			return ret;
 		}
 
 		public static bool GetQueryUGCChildren(UGCQueryHandle_t handle, uint index, PublishedFileId_t[] pvecPublishedFileID, uint cMaxEntries) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_GetQueryUGCChildren(handle, index, pvecPublishedFileID, cMaxEntries);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_GetQueryUGCChildren(handle, index, pvecPublishedFileID, cMaxEntries);
 		}
 
 		public static bool GetQueryUGCStatistic(UGCQueryHandle_t handle, uint index, EItemStatistic eStatType, out uint pStatValue) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_GetQueryUGCStatistic(handle, index, eStatType, out pStatValue);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_GetQueryUGCStatistic(handle, index, eStatType, out pStatValue);
 		}
 
 		public static uint GetQueryUGCNumAdditionalPreviews(UGCQueryHandle_t handle, uint index) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_GetQueryUGCNumAdditionalPreviews(handle, index);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_GetQueryUGCNumAdditionalPreviews(handle, index);
 		}
 
 		public static bool GetQueryUGCAdditionalPreview(UGCQueryHandle_t handle, uint index, uint previewIndex, out string pchURLOrVideoID, uint cchURLSize, out bool pbIsImage) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			IntPtr pchURLOrVideoID2 = Marshal.AllocHGlobal((int)cchURLSize);
-			bool ret = NativeMethods.ISteamUGC_GetQueryUGCAdditionalPreview(handle, index, previewIndex, pchURLOrVideoID2, cchURLSize, out pbIsImage);
+			bool ret = NativeMethods.ISteamGameServerUGC_GetQueryUGCAdditionalPreview(handle, index, previewIndex, pchURLOrVideoID2, cchURLSize, out pbIsImage);
 			pchURLOrVideoID = ret ? InteropHelp.PtrToStringUTF8(pchURLOrVideoID2) : null;
 			Marshal.FreeHGlobal(pchURLOrVideoID2);
 			return ret;
 		}
 
 		public static uint GetQueryUGCNumKeyValueTags(UGCQueryHandle_t handle, uint index) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_GetQueryUGCNumKeyValueTags(handle, index);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_GetQueryUGCNumKeyValueTags(handle, index);
 		}
 
 		public static bool GetQueryUGCKeyValueTag(UGCQueryHandle_t handle, uint index, uint keyValueTagIndex, out string pchKey, uint cchKeySize, out string pchValue, uint cchValueSize) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			IntPtr pchKey2 = Marshal.AllocHGlobal((int)cchKeySize);
 			IntPtr pchValue2 = Marshal.AllocHGlobal((int)cchValueSize);
-			bool ret = NativeMethods.ISteamUGC_GetQueryUGCKeyValueTag(handle, index, keyValueTagIndex, pchKey2, cchKeySize, pchValue2, cchValueSize);
+			bool ret = NativeMethods.ISteamGameServerUGC_GetQueryUGCKeyValueTag(handle, index, keyValueTagIndex, pchKey2, cchKeySize, pchValue2, cchValueSize);
 			pchKey = ret ? InteropHelp.PtrToStringUTF8(pchKey2) : null;
 			Marshal.FreeHGlobal(pchKey2);
 			pchValue = ret ? InteropHelp.PtrToStringUTF8(pchValue2) : null;
@@ -113,76 +113,76 @@ namespace Steamworks {
 		/// <para> Release the request to free up memory, after retrieving results</para>
 		/// </summary>
 		public static bool ReleaseQueryUGCRequest(UGCQueryHandle_t handle) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_ReleaseQueryUGCRequest(handle);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_ReleaseQueryUGCRequest(handle);
 		}
 
 		/// <summary>
 		/// <para> Options to set for querying UGC</para>
 		/// </summary>
 		public static bool AddRequiredTag(UGCQueryHandle_t handle, string pTagName) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			using (var pTagName2 = new InteropHelp.UTF8StringHandle(pTagName)) {
-				return NativeMethods.ISteamUGC_AddRequiredTag(handle, pTagName2);
+				return NativeMethods.ISteamGameServerUGC_AddRequiredTag(handle, pTagName2);
 			}
 		}
 
 		public static bool AddExcludedTag(UGCQueryHandle_t handle, string pTagName) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			using (var pTagName2 = new InteropHelp.UTF8StringHandle(pTagName)) {
-				return NativeMethods.ISteamUGC_AddExcludedTag(handle, pTagName2);
+				return NativeMethods.ISteamGameServerUGC_AddExcludedTag(handle, pTagName2);
 			}
 		}
 
 		public static bool SetReturnKeyValueTags(UGCQueryHandle_t handle, bool bReturnKeyValueTags) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_SetReturnKeyValueTags(handle, bReturnKeyValueTags);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_SetReturnKeyValueTags(handle, bReturnKeyValueTags);
 		}
 
 		public static bool SetReturnLongDescription(UGCQueryHandle_t handle, bool bReturnLongDescription) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_SetReturnLongDescription(handle, bReturnLongDescription);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_SetReturnLongDescription(handle, bReturnLongDescription);
 		}
 
 		public static bool SetReturnMetadata(UGCQueryHandle_t handle, bool bReturnMetadata) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_SetReturnMetadata(handle, bReturnMetadata);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_SetReturnMetadata(handle, bReturnMetadata);
 		}
 
 		public static bool SetReturnChildren(UGCQueryHandle_t handle, bool bReturnChildren) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_SetReturnChildren(handle, bReturnChildren);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_SetReturnChildren(handle, bReturnChildren);
 		}
 
 		public static bool SetReturnAdditionalPreviews(UGCQueryHandle_t handle, bool bReturnAdditionalPreviews) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_SetReturnAdditionalPreviews(handle, bReturnAdditionalPreviews);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_SetReturnAdditionalPreviews(handle, bReturnAdditionalPreviews);
 		}
 
 		public static bool SetReturnTotalOnly(UGCQueryHandle_t handle, bool bReturnTotalOnly) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_SetReturnTotalOnly(handle, bReturnTotalOnly);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_SetReturnTotalOnly(handle, bReturnTotalOnly);
 		}
 
 		public static bool SetLanguage(UGCQueryHandle_t handle, string pchLanguage) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			using (var pchLanguage2 = new InteropHelp.UTF8StringHandle(pchLanguage)) {
-				return NativeMethods.ISteamUGC_SetLanguage(handle, pchLanguage2);
+				return NativeMethods.ISteamGameServerUGC_SetLanguage(handle, pchLanguage2);
 			}
 		}
 
 		public static bool SetAllowCachedResponse(UGCQueryHandle_t handle, uint unMaxAgeSeconds) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_SetAllowCachedResponse(handle, unMaxAgeSeconds);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_SetAllowCachedResponse(handle, unMaxAgeSeconds);
 		}
 
 		/// <summary>
 		/// <para> Options only for querying user UGC</para>
 		/// </summary>
 		public static bool SetCloudFileNameFilter(UGCQueryHandle_t handle, string pMatchCloudFileName) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			using (var pMatchCloudFileName2 = new InteropHelp.UTF8StringHandle(pMatchCloudFileName)) {
-				return NativeMethods.ISteamUGC_SetCloudFileNameFilter(handle, pMatchCloudFileName2);
+				return NativeMethods.ISteamGameServerUGC_SetCloudFileNameFilter(handle, pMatchCloudFileName2);
 			}
 		}
 
@@ -190,27 +190,27 @@ namespace Steamworks {
 		/// <para> Options only for querying all UGC</para>
 		/// </summary>
 		public static bool SetMatchAnyTag(UGCQueryHandle_t handle, bool bMatchAnyTag) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_SetMatchAnyTag(handle, bMatchAnyTag);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_SetMatchAnyTag(handle, bMatchAnyTag);
 		}
 
 		public static bool SetSearchText(UGCQueryHandle_t handle, string pSearchText) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			using (var pSearchText2 = new InteropHelp.UTF8StringHandle(pSearchText)) {
-				return NativeMethods.ISteamUGC_SetSearchText(handle, pSearchText2);
+				return NativeMethods.ISteamGameServerUGC_SetSearchText(handle, pSearchText2);
 			}
 		}
 
 		public static bool SetRankedByTrendDays(UGCQueryHandle_t handle, uint unDays) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_SetRankedByTrendDays(handle, unDays);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_SetRankedByTrendDays(handle, unDays);
 		}
 
 		public static bool AddRequiredKeyValueTag(UGCQueryHandle_t handle, string pKey, string pValue) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			using (var pKey2 = new InteropHelp.UTF8StringHandle(pKey))
 			using (var pValue2 = new InteropHelp.UTF8StringHandle(pValue)) {
-				return NativeMethods.ISteamUGC_AddRequiredKeyValueTag(handle, pKey2, pValue2);
+				return NativeMethods.ISteamGameServerUGC_AddRequiredKeyValueTag(handle, pKey2, pValue2);
 			}
 		}
 
@@ -218,8 +218,8 @@ namespace Steamworks {
 		/// <para> DEPRECATED - Use CreateQueryUGCDetailsRequest call above instead!</para>
 		/// </summary>
 		public static SteamAPICall_t RequestUGCDetails(PublishedFileId_t nPublishedFileID, uint unMaxAgeSeconds) {
-			InteropHelp.TestIfAvailableClient();
-			return (SteamAPICall_t)NativeMethods.ISteamUGC_RequestUGCDetails(nPublishedFileID, unMaxAgeSeconds);
+			InteropHelp.TestIfAvailableGameServer();
+			return (SteamAPICall_t)NativeMethods.ISteamGameServerUGC_RequestUGCDetails(nPublishedFileID, unMaxAgeSeconds);
 		}
 
 		/// <summary>
@@ -227,25 +227,25 @@ namespace Steamworks {
 		/// <para> create new item for this app with no content attached yet</para>
 		/// </summary>
 		public static SteamAPICall_t CreateItem(AppId_t nConsumerAppId, EWorkshopFileType eFileType) {
-			InteropHelp.TestIfAvailableClient();
-			return (SteamAPICall_t)NativeMethods.ISteamUGC_CreateItem(nConsumerAppId, eFileType);
+			InteropHelp.TestIfAvailableGameServer();
+			return (SteamAPICall_t)NativeMethods.ISteamGameServerUGC_CreateItem(nConsumerAppId, eFileType);
 		}
 
 		/// <summary>
 		/// <para> start an UGC item update. Set changed properties before commiting update with CommitItemUpdate()</para>
 		/// </summary>
 		public static UGCUpdateHandle_t StartItemUpdate(AppId_t nConsumerAppId, PublishedFileId_t nPublishedFileID) {
-			InteropHelp.TestIfAvailableClient();
-			return (UGCUpdateHandle_t)NativeMethods.ISteamUGC_StartItemUpdate(nConsumerAppId, nPublishedFileID);
+			InteropHelp.TestIfAvailableGameServer();
+			return (UGCUpdateHandle_t)NativeMethods.ISteamGameServerUGC_StartItemUpdate(nConsumerAppId, nPublishedFileID);
 		}
 
 		/// <summary>
 		/// <para> change the title of an UGC item</para>
 		/// </summary>
 		public static bool SetItemTitle(UGCUpdateHandle_t handle, string pchTitle) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			using (var pchTitle2 = new InteropHelp.UTF8StringHandle(pchTitle)) {
-				return NativeMethods.ISteamUGC_SetItemTitle(handle, pchTitle2);
+				return NativeMethods.ISteamGameServerUGC_SetItemTitle(handle, pchTitle2);
 			}
 		}
 
@@ -253,9 +253,9 @@ namespace Steamworks {
 		/// <para> change the description of an UGC item</para>
 		/// </summary>
 		public static bool SetItemDescription(UGCUpdateHandle_t handle, string pchDescription) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			using (var pchDescription2 = new InteropHelp.UTF8StringHandle(pchDescription)) {
-				return NativeMethods.ISteamUGC_SetItemDescription(handle, pchDescription2);
+				return NativeMethods.ISteamGameServerUGC_SetItemDescription(handle, pchDescription2);
 			}
 		}
 
@@ -263,9 +263,9 @@ namespace Steamworks {
 		/// <para> specify the language of the title or description that will be set</para>
 		/// </summary>
 		public static bool SetItemUpdateLanguage(UGCUpdateHandle_t handle, string pchLanguage) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			using (var pchLanguage2 = new InteropHelp.UTF8StringHandle(pchLanguage)) {
-				return NativeMethods.ISteamUGC_SetItemUpdateLanguage(handle, pchLanguage2);
+				return NativeMethods.ISteamGameServerUGC_SetItemUpdateLanguage(handle, pchLanguage2);
 			}
 		}
 
@@ -273,9 +273,9 @@ namespace Steamworks {
 		/// <para> change the metadata of an UGC item (max = k_cchDeveloperMetadataMax)</para>
 		/// </summary>
 		public static bool SetItemMetadata(UGCUpdateHandle_t handle, string pchMetaData) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			using (var pchMetaData2 = new InteropHelp.UTF8StringHandle(pchMetaData)) {
-				return NativeMethods.ISteamUGC_SetItemMetadata(handle, pchMetaData2);
+				return NativeMethods.ISteamGameServerUGC_SetItemMetadata(handle, pchMetaData2);
 			}
 		}
 
@@ -283,25 +283,25 @@ namespace Steamworks {
 		/// <para> change the visibility of an UGC item</para>
 		/// </summary>
 		public static bool SetItemVisibility(UGCUpdateHandle_t handle, ERemoteStoragePublishedFileVisibility eVisibility) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_SetItemVisibility(handle, eVisibility);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_SetItemVisibility(handle, eVisibility);
 		}
 
 		/// <summary>
 		/// <para> change the tags of an UGC item</para>
 		/// </summary>
 		public static bool SetItemTags(UGCUpdateHandle_t updateHandle, System.Collections.Generic.IList<string> pTags) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_SetItemTags(updateHandle, new InteropHelp.SteamParamStringArray(pTags));
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_SetItemTags(updateHandle, new InteropHelp.SteamParamStringArray(pTags));
 		}
 
 		/// <summary>
 		/// <para> update item content from this local folder</para>
 		/// </summary>
 		public static bool SetItemContent(UGCUpdateHandle_t handle, string pszContentFolder) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			using (var pszContentFolder2 = new InteropHelp.UTF8StringHandle(pszContentFolder)) {
-				return NativeMethods.ISteamUGC_SetItemContent(handle, pszContentFolder2);
+				return NativeMethods.ISteamGameServerUGC_SetItemContent(handle, pszContentFolder2);
 			}
 		}
 
@@ -309,9 +309,9 @@ namespace Steamworks {
 		/// <para>  change preview image file for this item. pszPreviewFile points to local image file, which must be under 1MB in size</para>
 		/// </summary>
 		public static bool SetItemPreview(UGCUpdateHandle_t handle, string pszPreviewFile) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			using (var pszPreviewFile2 = new InteropHelp.UTF8StringHandle(pszPreviewFile)) {
-				return NativeMethods.ISteamUGC_SetItemPreview(handle, pszPreviewFile2);
+				return NativeMethods.ISteamGameServerUGC_SetItemPreview(handle, pszPreviewFile2);
 			}
 		}
 
@@ -319,9 +319,9 @@ namespace Steamworks {
 		/// <para> remove any existing key-value tags with the specified key</para>
 		/// </summary>
 		public static bool RemoveItemKeyValueTags(UGCUpdateHandle_t handle, string pchKey) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			using (var pchKey2 = new InteropHelp.UTF8StringHandle(pchKey)) {
-				return NativeMethods.ISteamUGC_RemoveItemKeyValueTags(handle, pchKey2);
+				return NativeMethods.ISteamGameServerUGC_RemoveItemKeyValueTags(handle, pchKey2);
 			}
 		}
 
@@ -329,10 +329,10 @@ namespace Steamworks {
 		/// <para> add new key-value tags for the item. Note that there can be multiple values for a tag.</para>
 		/// </summary>
 		public static bool AddItemKeyValueTag(UGCUpdateHandle_t handle, string pchKey, string pchValue) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			using (var pchKey2 = new InteropHelp.UTF8StringHandle(pchKey))
 			using (var pchValue2 = new InteropHelp.UTF8StringHandle(pchValue)) {
-				return NativeMethods.ISteamUGC_AddItemKeyValueTag(handle, pchKey2, pchValue2);
+				return NativeMethods.ISteamGameServerUGC_AddItemKeyValueTag(handle, pchKey2, pchValue2);
 			}
 		}
 
@@ -340,78 +340,78 @@ namespace Steamworks {
 		/// <para> commit update process started with StartItemUpdate()</para>
 		/// </summary>
 		public static SteamAPICall_t SubmitItemUpdate(UGCUpdateHandle_t handle, string pchChangeNote) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			using (var pchChangeNote2 = new InteropHelp.UTF8StringHandle(pchChangeNote)) {
-				return (SteamAPICall_t)NativeMethods.ISteamUGC_SubmitItemUpdate(handle, pchChangeNote2);
+				return (SteamAPICall_t)NativeMethods.ISteamGameServerUGC_SubmitItemUpdate(handle, pchChangeNote2);
 			}
 		}
 
 		public static EItemUpdateStatus GetItemUpdateProgress(UGCUpdateHandle_t handle, out ulong punBytesProcessed, out ulong punBytesTotal) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_GetItemUpdateProgress(handle, out punBytesProcessed, out punBytesTotal);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_GetItemUpdateProgress(handle, out punBytesProcessed, out punBytesTotal);
 		}
 
 		/// <summary>
 		/// <para> Steam Workshop Consumer API</para>
 		/// </summary>
 		public static SteamAPICall_t SetUserItemVote(PublishedFileId_t nPublishedFileID, bool bVoteUp) {
-			InteropHelp.TestIfAvailableClient();
-			return (SteamAPICall_t)NativeMethods.ISteamUGC_SetUserItemVote(nPublishedFileID, bVoteUp);
+			InteropHelp.TestIfAvailableGameServer();
+			return (SteamAPICall_t)NativeMethods.ISteamGameServerUGC_SetUserItemVote(nPublishedFileID, bVoteUp);
 		}
 
 		public static SteamAPICall_t GetUserItemVote(PublishedFileId_t nPublishedFileID) {
-			InteropHelp.TestIfAvailableClient();
-			return (SteamAPICall_t)NativeMethods.ISteamUGC_GetUserItemVote(nPublishedFileID);
+			InteropHelp.TestIfAvailableGameServer();
+			return (SteamAPICall_t)NativeMethods.ISteamGameServerUGC_GetUserItemVote(nPublishedFileID);
 		}
 
 		public static SteamAPICall_t AddItemToFavorites(AppId_t nAppId, PublishedFileId_t nPublishedFileID) {
-			InteropHelp.TestIfAvailableClient();
-			return (SteamAPICall_t)NativeMethods.ISteamUGC_AddItemToFavorites(nAppId, nPublishedFileID);
+			InteropHelp.TestIfAvailableGameServer();
+			return (SteamAPICall_t)NativeMethods.ISteamGameServerUGC_AddItemToFavorites(nAppId, nPublishedFileID);
 		}
 
 		public static SteamAPICall_t RemoveItemFromFavorites(AppId_t nAppId, PublishedFileId_t nPublishedFileID) {
-			InteropHelp.TestIfAvailableClient();
-			return (SteamAPICall_t)NativeMethods.ISteamUGC_RemoveItemFromFavorites(nAppId, nPublishedFileID);
+			InteropHelp.TestIfAvailableGameServer();
+			return (SteamAPICall_t)NativeMethods.ISteamGameServerUGC_RemoveItemFromFavorites(nAppId, nPublishedFileID);
 		}
 
 		/// <summary>
 		/// <para> subscribe to this item, will be installed ASAP</para>
 		/// </summary>
 		public static SteamAPICall_t SubscribeItem(PublishedFileId_t nPublishedFileID) {
-			InteropHelp.TestIfAvailableClient();
-			return (SteamAPICall_t)NativeMethods.ISteamUGC_SubscribeItem(nPublishedFileID);
+			InteropHelp.TestIfAvailableGameServer();
+			return (SteamAPICall_t)NativeMethods.ISteamGameServerUGC_SubscribeItem(nPublishedFileID);
 		}
 
 		/// <summary>
 		/// <para> unsubscribe from this item, will be uninstalled after game quits</para>
 		/// </summary>
 		public static SteamAPICall_t UnsubscribeItem(PublishedFileId_t nPublishedFileID) {
-			InteropHelp.TestIfAvailableClient();
-			return (SteamAPICall_t)NativeMethods.ISteamUGC_UnsubscribeItem(nPublishedFileID);
+			InteropHelp.TestIfAvailableGameServer();
+			return (SteamAPICall_t)NativeMethods.ISteamGameServerUGC_UnsubscribeItem(nPublishedFileID);
 		}
 
 		/// <summary>
 		/// <para> number of subscribed items</para>
 		/// </summary>
 		public static uint GetNumSubscribedItems() {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_GetNumSubscribedItems();
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_GetNumSubscribedItems();
 		}
 
 		/// <summary>
 		/// <para> all subscribed item PublishFileIDs</para>
 		/// </summary>
 		public static uint GetSubscribedItems(PublishedFileId_t[] pvecPublishedFileID, uint cMaxEntries) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_GetSubscribedItems(pvecPublishedFileID, cMaxEntries);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_GetSubscribedItems(pvecPublishedFileID, cMaxEntries);
 		}
 
 		/// <summary>
 		/// <para> get EItemState flags about item on this client</para>
 		/// </summary>
 		public static uint GetItemState(PublishedFileId_t nPublishedFileID) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_GetItemState(nPublishedFileID);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_GetItemState(nPublishedFileID);
 		}
 
 		/// <summary>
@@ -419,9 +419,9 @@ namespace Steamworks {
 		/// <para> if k_EItemStateLegacyItem is set, pchFolder contains the path to the legacy file itself (not a folder)</para>
 		/// </summary>
 		public static bool GetItemInstallInfo(PublishedFileId_t nPublishedFileID, out ulong punSizeOnDisk, out string pchFolder, uint cchFolderSize, out uint punTimeStamp) {
-			InteropHelp.TestIfAvailableClient();
+			InteropHelp.TestIfAvailableGameServer();
 			IntPtr pchFolder2 = Marshal.AllocHGlobal((int)cchFolderSize);
-			bool ret = NativeMethods.ISteamUGC_GetItemInstallInfo(nPublishedFileID, out punSizeOnDisk, pchFolder2, cchFolderSize, out punTimeStamp);
+			bool ret = NativeMethods.ISteamGameServerUGC_GetItemInstallInfo(nPublishedFileID, out punSizeOnDisk, pchFolder2, cchFolderSize, out punTimeStamp);
 			pchFolder = ret ? InteropHelp.PtrToStringUTF8(pchFolder2) : null;
 			Marshal.FreeHGlobal(pchFolder2);
 			return ret;
@@ -431,8 +431,8 @@ namespace Steamworks {
 		/// <para> get info about pending update for items that have k_EItemStateNeedsUpdate set. punBytesTotal will be valid after download started once</para>
 		/// </summary>
 		public static bool GetItemDownloadInfo(PublishedFileId_t nPublishedFileID, out ulong punBytesDownloaded, out ulong punBytesTotal) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_GetItemDownloadInfo(nPublishedFileID, out punBytesDownloaded, out punBytesTotal);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_GetItemDownloadInfo(nPublishedFileID, out punBytesDownloaded, out punBytesTotal);
 		}
 
 		/// <summary>
@@ -441,8 +441,8 @@ namespace Steamworks {
 		/// <para> If bHighPriority is set, any other item download will be suspended and this item downloaded ASAP.</para>
 		/// </summary>
 		public static bool DownloadItem(PublishedFileId_t nPublishedFileID, bool bHighPriority) {
-			InteropHelp.TestIfAvailableClient();
-			return NativeMethods.ISteamUGC_DownloadItem(nPublishedFileID, bHighPriority);
+			InteropHelp.TestIfAvailableGameServer();
+			return NativeMethods.ISteamGameServerUGC_DownloadItem(nPublishedFileID, bHighPriority);
 		}
 	}
 }
