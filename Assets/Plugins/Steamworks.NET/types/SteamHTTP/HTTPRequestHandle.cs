@@ -1,10 +1,13 @@
 // This file is provided under The MIT License as part of Steamworks.NET.
-// Copyright (c) 2013-2015 Riley Labrecque
+// Copyright (c) 2013-2017 Riley Labrecque
 // Please see the included LICENSE.txt for additional information.
 
 // Changes to this file will be reverted when you update Steamworks.NET
 
+#if !DISABLESTEAMWORKS
+
 namespace Steamworks {
+	[System.Serializable]
 	public struct HTTPRequestHandle : System.IEquatable<HTTPRequestHandle>, System.IComparable<HTTPRequestHandle> {
 		public static readonly HTTPRequestHandle Invalid = new HTTPRequestHandle(0);
 		public uint m_HTTPRequestHandle;
@@ -50,3 +53,5 @@ namespace Steamworks {
 		}
 	}
 }
+
+#endif // !DISABLESTEAMWORKS

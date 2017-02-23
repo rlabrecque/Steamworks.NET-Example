@@ -1,5 +1,5 @@
 // This file is provided under The MIT License as part of Steamworks.NET.
-// Copyright (c) 2013-2015 Riley Labrecque
+// Copyright (c) 2013-2017 Riley Labrecque
 // Please see the included LICENSE.txt for additional information.
 
 // Changes to this file will be reverted when you update Steamworks.NET
@@ -7,7 +7,7 @@
 namespace Steamworks {
 	// servernetadr_t is all the addressing info the serverbrowser needs to know about a game server,
 	// namely: its IP, its connection port, and its query port.
-	//[StructLayout(LayoutKind.Sequential)]
+	[System.Serializable]
 	public struct servernetadr_t {
 		private ushort m_usConnectionPort;	// (in HOST byte order)
 		private ushort m_usQueryPort;
@@ -24,7 +24,7 @@ namespace Steamworks {
 			return netadr_t( m_unIP, m_usQueryPort );
 		}
 #endif
-		
+
 		// Access the query port.
 		public ushort GetQueryPort() {
 			return m_usQueryPort;

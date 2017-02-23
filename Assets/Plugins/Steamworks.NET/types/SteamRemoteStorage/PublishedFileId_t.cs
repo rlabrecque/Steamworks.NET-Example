@@ -1,10 +1,13 @@
 // This file is provided under The MIT License as part of Steamworks.NET.
-// Copyright (c) 2013-2015 Riley Labrecque
+// Copyright (c) 2013-2017 Riley Labrecque
 // Please see the included LICENSE.txt for additional information.
 
 // Changes to this file will be reverted when you update Steamworks.NET
 
+#if !DISABLESTEAMWORKS
+
 namespace Steamworks {
+	[System.Serializable]
 	public struct PublishedFileId_t : System.IEquatable<PublishedFileId_t>, System.IComparable<PublishedFileId_t> {
 		public static readonly PublishedFileId_t Invalid = new PublishedFileId_t(0);
 		public ulong m_PublishedFileId;
@@ -50,3 +53,5 @@ namespace Steamworks {
 		}
 	}
 }
+
+#endif // !DISABLESTEAMWORKS

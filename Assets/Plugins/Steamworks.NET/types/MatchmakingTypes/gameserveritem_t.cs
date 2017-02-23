@@ -1,5 +1,5 @@
 // This file is provided under The MIT License as part of Steamworks.NET.
-// Copyright (c) 2013-2015 Riley Labrecque
+// Copyright (c) 2013-2017 Riley Labrecque
 // Please see the included LICENSE.txt for additional information.
 
 // Changes to this file will be reverted when you update Steamworks.NET
@@ -12,6 +12,7 @@ namespace Steamworks {
 	// Purpose: Data describing a single server
 	//-----------------------------------------------------------------------------
 	[StructLayout(LayoutKind.Sequential, Size = 372, Pack = 4)]
+	[System.Serializable]
 	public class gameserveritem_t {
 		public string GetGameDir() {
 			return Encoding.UTF8.GetString(m_szGameDir, 0, System.Array.IndexOf<byte>(m_szGameDir, 0));

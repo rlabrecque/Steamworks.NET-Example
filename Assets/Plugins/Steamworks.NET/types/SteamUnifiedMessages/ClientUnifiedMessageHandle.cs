@@ -1,10 +1,13 @@
 // This file is provided under The MIT License as part of Steamworks.NET.
-// Copyright (c) 2013-2015 Riley Labrecque
+// Copyright (c) 2013-2017 Riley Labrecque
 // Please see the included LICENSE.txt for additional information.
 
 // Changes to this file will be reverted when you update Steamworks.NET
 
+#if !DISABLESTEAMWORKS
+
 namespace Steamworks {
+	[System.Serializable]
 	public struct ClientUnifiedMessageHandle : System.IEquatable<ClientUnifiedMessageHandle>, System.IComparable<ClientUnifiedMessageHandle> {
 		public static readonly ClientUnifiedMessageHandle Invalid = new ClientUnifiedMessageHandle(0);
 		public ulong m_ClientUnifiedMessageHandle;
@@ -50,3 +53,5 @@ namespace Steamworks {
 		}
 	}
 }
+
+#endif // !DISABLESTEAMWORKS

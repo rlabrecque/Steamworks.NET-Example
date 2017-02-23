@@ -1,18 +1,19 @@
 // This file is provided under The MIT License as part of Steamworks.NET.
-// Copyright (c) 2013-2015 Riley Labrecque
+// Copyright (c) 2013-2017 Riley Labrecque
 // Please see the included LICENSE.txt for additional information.
 
 // Changes to this file will be reverted when you update Steamworks.NET
 
+#if !DISABLESTEAMWORKS
+
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Steamworks {
 	public class InteropHelp {
 		public static void TestIfPlatformSupported() {
-#if !UNITY_EDITOR && !UNITY_STANDALONE_WIN && !UNITY_STANDALONE_LINUX && !UNITY_STANDALONE_OSX && !STEAMWORKS_WIN && !STEAMWORKS_LIN_OSX
+#if !UNITY_EDITOR && !UNITY_STANDALONE && !STEAMWORKS_WIN && !STEAMWORKS_LIN_OSX
 			throw new System.InvalidOperationException("Steamworks functions can only be called on platforms that Steam is available on.");
 #endif
 		}
@@ -26,15 +27,15 @@ namespace Steamworks {
 
 		public static void TestIfAvailableGameServer() {
 			TestIfPlatformSupported();
-			if (NativeMethods.SteamClientGameServer() == System.IntPtr.Zero) {
+			if (NativeMethods.SteamGameServerClient() == System.IntPtr.Zero) {
 				throw new System.InvalidOperationException("Steamworks is not initialized.");
 			}
 		}
-		
+
 		// This continues to exist for both 'out string' and strings returned by Steamworks functions.
 		public static string PtrToStringUTF8(IntPtr nativeUtf8) {
 			if (nativeUtf8 == IntPtr.Zero) {
-				return string.Empty;
+				return null;
 			}
 
 			int len = 0;
@@ -54,6 +55,7 @@ namespace Steamworks {
 
 		// This is for 'const char *' arguments which we need to ensure do not get GC'd while Steam is using them.
 		// We can't use an ICustomMarshaler because Unity crashes when a string between 96 and 127 characters long is defined/initialized at the top of class scope...
+#if UNITY_EDITOR || UNITY_STANDALONE || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX
 		public class UTF8StringHandle : Microsoft.Win32.SafeHandles.SafeHandleZeroOrMinusOneIsInvalid {
 			public UTF8StringHandle(string str)
 				: base(true) {
@@ -62,6 +64,7 @@ namespace Steamworks {
 					return;
 				}
 
+				// +1 for '\0'
 				byte[] strbuf = new byte[Encoding.UTF8.GetByteCount(str) + 1];
 				Encoding.UTF8.GetBytes(str, 0, str.Length, strbuf, 0);
 				IntPtr buffer = Marshal.AllocHGlobal(strbuf.Length);
@@ -77,6 +80,12 @@ namespace Steamworks {
 				return true;
 			}
 		}
+#else
+		public class UTF8StringHandle : IDisposable {
+			public UTF8StringHandle(string str) { }
+			public void Dispose() {}
+		}
+#endif
 
 		// TODO - Should be IDisposable
 		// We can't use an ICustomMarshaler because Unity dies when MarshalManagedToNative() gets called with a generic type.
@@ -132,7 +141,7 @@ namespace Steamworks {
 			}
 		}
 	}
-	
+
 	// TODO - Should be IDisposable
 	// MatchMaking Key-Value Pair Marshaller
 	public class MMKVPMarshaller {
@@ -170,22 +179,26 @@ namespace Steamworks {
 	}
 
 	public class DllCheck {
+#if DISABLED
 		[DllImport("kernel32.dll")]
 		public static extern IntPtr GetModuleHandle(string lpModuleName);
 
 		[DllImport("kernel32.dll", CharSet = CharSet.Auto)]
 		extern static int GetModuleFileName(IntPtr hModule, StringBuilder strFullPath, int nSize);
+#endif
 
 		/// <summary>
 		/// This is an optional runtime check to ensure that the dlls are the correct version. Returns false only if the steam_api.dll is found and it's the wrong size or version number.
 		/// </summary>
 		public static bool Test() {
-			//bool ret = CheckSteamAPIDLL();
+#if DISABLED
+			bool ret = CheckSteamAPIDLL();
+#endif
 			return true;
 		}
 
+#if DISABLED
 		private static bool CheckSteamAPIDLL() {
-#if STEAMWORKS_WIN || (UNITY_EDITOR_WIN && UNITY_STANDALONE) || (!UNITY_EDITOR && UNITY_STANDALONE_WIN)
 			string fileName;
 			int fileBytes;
 			if (IntPtr.Size == 4) {
@@ -217,8 +230,10 @@ namespace Steamworks {
 					return false;
 				}
 			}
-#endif
 			return true;
 		}
+#endif
 	}
 }
+
+#endif // !DISABLESTEAMWORKS
