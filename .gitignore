@@ -1,12 +1,13 @@
-.DS_Store
+# Folders
+.DS_Store/
+.vs/
 Library/
-Temp/
 obj/
+Temp/
+
+# Files
 *.csproj
-*.pidb
-*.unityproj
 *.sln
-*.userprefs
-*.suo
+*.VC.db
 
 /steam_appid.txt
