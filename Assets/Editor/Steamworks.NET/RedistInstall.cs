@@ -1,5 +1,5 @@
 // This file is provided under The MIT License as part of Steamworks.NET.
-// Copyright (c) 2013-2017 Riley Labrecque
+// Copyright (c) 2013-2018 Riley Labrecque
 // Please see the included LICENSE.txt for additional information.
 
 // Uncomment this out or add it to your custom platform defines to disable checking the plugin platform settings.
@@ -70,7 +70,7 @@ public class RedistInstall {
 		}
 	}
 
-#if UNITY_5 || UNITY_2017
+#if UNITY_5 || UNITY_2017 || UNITY_2017_1_OR_NEWER
 	static void SetPlatformSettings() {
 		foreach(var plugin in PluginImporter.GetAllImporters()) {
 			// Skip any null plugins, why is this a thing?!
@@ -87,11 +87,10 @@ public class RedistInstall {
 			string filename = Path.GetFileName(plugin.assetPath);
 
 			switch(filename) {
-				case "CSteamworks.bundle":
+				case "libsteam_api.dylib":
 					didUpdate |= ResetPluginSettings(plugin, "AnyCPU", "OSX");
 					didUpdate |= SetCompatibleWithOSX(plugin);
 					break;
-				case "libCSteamworks.so":
 				case "libsteam_api.so":
 					if(plugin.assetPath.Contains("x86_64")) {
 						didUpdate |= ResetPluginSettings(plugin, "x86_64", "Linux");
@@ -100,16 +99,6 @@ public class RedistInstall {
 					else {
 						didUpdate |= ResetPluginSettings(plugin, "x86", "Linux");
 						didUpdate |= SetCompatibleWithLinux(plugin, BuildTarget.StandaloneLinux);
-					}
-					break;
-				case "CSteamworks.dll":
-					if (plugin.assetPath.Contains("x86_64")) {
-						didUpdate |= ResetPluginSettings(plugin, "x86_64", "Windows");
-						didUpdate |= SetCompatibleWithWindows(plugin, BuildTarget.StandaloneWindows64);
-					}
-					else {
-						didUpdate |= ResetPluginSettings(plugin, "x86", "Windows");
-						didUpdate |= SetCompatibleWithWindows(plugin, BuildTarget.StandaloneWindows);
 					}
 					break;
 				case "steam_api.dll":
@@ -173,9 +162,13 @@ public class RedistInstall {
 	static bool SetCompatibleWithOSX(PluginImporter plugin) {
 		bool didUpdate = false;
 
+#if UNITY_2017_3_OR_NEWER
+		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneOSX, true);
+#else
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneOSXIntel, true);
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneOSXIntel64, true);
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneOSXUniversal, true);
+#endif
 
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneLinux, false);
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneLinux64, false);
@@ -199,9 +192,13 @@ public class RedistInstall {
 		}
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneLinuxUniversal, true);
 
+#if UNITY_2017_3_OR_NEWER
+		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneOSX, false);
+#else
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneOSXIntel, false);
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneOSXIntel64, false);
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneOSXUniversal, false);
+#endif
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneWindows, false);
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneWindows64, false);
 
@@ -223,9 +220,13 @@ public class RedistInstall {
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneLinux64, false);
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneLinux, false);
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneLinuxUniversal, false);
+#if UNITY_2017_3_OR_NEWER
+		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneOSX, false);
+#else
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneOSXIntel, false);
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneOSXIntel64, false);
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneOSXUniversal, false);
+#endif
 
 		return didUpdate;
 	}
@@ -236,9 +237,13 @@ public class RedistInstall {
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneLinux64, false);
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneLinux, false);
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneLinuxUniversal, false);
+#if UNITY_2017_3_OR_NEWER
+		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneOSX, false);
+#else
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneOSXIntel, false);
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneOSXIntel64, false);
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneOSXUniversal, false);
+#endif
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneWindows, false);
 		didUpdate |= SetCompatibleWithPlatform(plugin, BuildTarget.StandaloneWindows64, false);
 
@@ -253,5 +258,5 @@ public class RedistInstall {
 		plugin.SetCompatibleWithPlatform(platform, enable);
 		return true;
 	}
-#endif // UNITY_5
+#endif // UNITY_5 || UNITY_2017 || UNITY_2017_1_OR_NEWER
 }

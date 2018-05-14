@@ -1,6 +1,12 @@
 // This file is provided under The MIT License as part of Steamworks.NET.
-// Copyright (c) 2013-2017 Riley Labrecque
+// Copyright (c) 2013-2018 Riley Labrecque
 // Please see the included LICENSE.txt for additional information.
+
+#if UNITY_ANDROID || UNITY_IOS || UNITY_TIZEN || UNITY_TVOS || UNITY_WEBGL || UNITY_WSA || UNITY_PS4 || UNITY_WII || UNITY_XBOXONE || UNITY_SWITCH
+#define DISABLESTEAMWORKS
+#endif
+
+#if !DISABLESTEAMWORKS
 
 // Add 'DISABLEREDISTCOPY' to your custom platform defines to disable automatic copying!
 #if UNITY_5_3_OR_NEWER
@@ -10,20 +16,59 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
+using Steamworks;
 using System.IO;
 
 public class RedistCopy {
 	[PostProcessBuild]
 	public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject) {
-#if !DISABLEREDISTCOPY
-		if (target != BuildTarget.StandaloneWindows && target != BuildTarget.StandaloneWindows64 &&
-			target != BuildTarget.StandaloneOSXIntel && target != BuildTarget.StandaloneOSXIntel64 && target != BuildTarget.StandaloneOSXUniversal &&
-			target != BuildTarget.StandaloneLinux && target != BuildTarget.StandaloneLinux64 && target != BuildTarget.StandaloneLinuxUniversal) {
+		string baseDir;
+		string pluginsDir;
+		switch(target)
+		{
+		case BuildTarget.StandaloneWindows:
+		case BuildTarget.StandaloneWindows64:
+			baseDir = Path.Combine(Path.GetDirectoryName(pathToBuiltProject), Path.GetFileNameWithoutExtension(pathToBuiltProject) + "_Data");
+			pluginsDir = Path.Combine(baseDir, "Plugins");
+			break;
+		case BuildTarget.StandaloneLinux:
+			baseDir = Path.Combine(Path.GetDirectoryName(pathToBuiltProject), Path.GetFileNameWithoutExtension(pathToBuiltProject) + "_Data");
+			pluginsDir = Path.Combine(Path.Combine(baseDir, "Plugins"), "x86");
+			break;
+		case BuildTarget.StandaloneLinux64:
+		case BuildTarget.StandaloneLinuxUniversal:
+			baseDir = Path.Combine(Path.GetDirectoryName(pathToBuiltProject), Path.GetFileNameWithoutExtension(pathToBuiltProject) + "_Data");
+			pluginsDir = Path.Combine(Path.Combine(baseDir, "Plugins"), "x86_64");
+			break;
+#if UNITY_2017_3_OR_NEWER
+		case BuildTarget.StandaloneOSX:
+#else
+		case BuildTarget.StandaloneOSXIntel:
+		case BuildTarget.StandaloneOSXIntel64:
+		case BuildTarget.StandaloneOSXUniversal:
+#endif
+			baseDir = Path.Combine(Path.GetDirectoryName(pathToBuiltProject), Path.GetFileNameWithoutExtension(pathToBuiltProject) + ".app");
+			baseDir = Path.Combine(baseDir, "Contents");
+			pluginsDir = Path.Combine(baseDir, "Plugins");
+			break;
+		default:
 			return;
 		}
 
-		string strProjectName = Path.GetFileNameWithoutExtension(pathToBuiltProject);
+		string[] DebugInfo = {
+			"Steamworks.NET created by Riley Labrecque",
+			"http://steamworks.github.io",
+			"",
+			"Steamworks.NET Version: " + Steamworks.Version.SteamworksNETVersion,
+			"Steamworks SDK Version: " + Steamworks.Version.SteamworksSDKVersion,
+			"Steam API DLL Version:  " + Steamworks.Version.SteamAPIDLLVersion,
+			"Steam API DLL Size:     " + Steamworks.Version.SteamAPIDLLSize,
+			"Steam API64 DLL Size:   " + Steamworks.Version.SteamAPI64DLLSize,
+			""
+		};
+		File.WriteAllLines(Path.Combine(pluginsDir, "Steamworks.NET.txt"), DebugInfo);
 
+#if !DISABLEREDISTCOPY
 		if (target == BuildTarget.StandaloneWindows64) {
 			CopyFile("steam_api64.dll", "steam_api64.dll", "Assets/Plugins/x86_64", pathToBuiltProject);
 		}
@@ -33,12 +78,7 @@ public class RedistCopy {
 
 		string controllerCfg = Path.Combine(Application.dataPath, "controller.vdf");
 		if (File.Exists(controllerCfg)) {
-			string dir = "_Data";
-			if (target == BuildTarget.StandaloneOSXIntel || target == BuildTarget.StandaloneOSXIntel64 || target == BuildTarget.StandaloneOSXUniversal) {
-				dir = ".app/Contents";
-			}
-
-			string strFileDest = Path.Combine(Path.Combine(Path.GetDirectoryName(pathToBuiltProject), strProjectName + dir), "controller.vdf");
+			string strFileDest = Path.Combine(baseDir, "controller.vdf");
 
 			File.Copy(controllerCfg, strFileDest);
 			File.SetAttributes(strFileDest, File.GetAttributes(strFileDest) & ~FileAttributes.ReadOnly);
@@ -78,3 +118,5 @@ public class RedistCopy {
 		}
 	}
 }
+
+#endif // !DISABLESTEAMWORKS

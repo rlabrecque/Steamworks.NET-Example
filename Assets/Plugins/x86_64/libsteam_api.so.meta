@@ -1,53 +1,83 @@
 fileFormatVersion: 2
-guid: 3409233563c009e4daae880538ec3f3b
-timeCreated: 1487811858
-licenseType: Pro
+guid: fab3644a93d0818419f21801c85c26d3
 PluginImporter:
-  serializedVersion: 1
+  externalObjects: {}
+  serializedVersion: 2
   iconMap: {}
   executionOrder: {}
   isPreloaded: 0
   isOverridable: 0
   platformData:
-    Any:
+  - first:
+      '': OSXIntel
+    second:
       enabled: 0
-      settings: {}
-    Editor:
+      settings:
+        CPU: None
+  - first:
+      '': OSXIntel64
+    second:
       enabled: 1
+      settings:
+        CPU: AnyCPU
+  - first:
+      Any: 
+    second:
+      enabled: 1
+      settings: {}
+  - first:
+      Editor: Editor
+    second:
+      enabled: 0
       settings:
         CPU: x86_64
         DefaultValueInitialized: true
-        OS: Linux
-    Linux:
+  - first:
+      Facebook: Win
+    second:
       enabled: 0
       settings:
         CPU: None
-    Linux64:
+  - first:
+      Facebook: Win64
+    second:
       enabled: 1
-      settings:
-        CPU: x86_64
-    LinuxUniversal:
-      enabled: 1
-      settings:
-        CPU: x86_64
-    OSXIntel:
-      enabled: 0
-      settings:
-        CPU: None
-    OSXIntel64:
-      enabled: 0
       settings:
         CPU: AnyCPU
-    OSXUniversal:
-      enabled: 0
-      settings:
-        CPU: x86_64
-    Win:
+  - first:
+      Standalone: Linux
+    second:
       enabled: 0
       settings:
         CPU: None
-    Win64:
+  - first:
+      Standalone: Linux64
+    second:
+      enabled: 1
+      settings:
+        CPU: x86_64
+  - first:
+      Standalone: LinuxUniversal
+    second:
+      enabled: 1
+      settings:
+        CPU: x86_64
+  - first:
+      Standalone: OSXUniversal
+    second:
       enabled: 0
+      settings:
+        CPU: x86_64
+  - first:
+      Standalone: Win
+    second:
+      enabled: 0
+      settings:
+        CPU: None
+  - first:
+      Standalone: Win64
+    second:
+      enabled: 1
       settings:
         CPU: AnyCPU
   userData: 
