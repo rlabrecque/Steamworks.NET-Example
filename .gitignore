@@ -11,3 +11,4 @@ Temp/
 *.VC.db
 
 /steam_appid.txt
+.vscode/
