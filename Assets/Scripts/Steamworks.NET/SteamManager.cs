@@ -1,9 +1,9 @@
 // The SteamManager is designed to work with Steamworks.NET
 // This file is released into the public domain.
 // Where that dedication is not recognized you are granted a perpetual,
-// irrevokable license to copy and modify this file as you see fit.
+// irrevocable license to copy and modify this file as you see fit.
 //
-// Version: 1.0.5
+// Version: 1.0.6
 
 using UnityEngine;
 using System.Collections;
@@ -27,7 +27,7 @@ public class SteamManager : MonoBehaviour {
 		}
 	}
 
-	private static bool s_EverInialized;
+	private static bool s_EverInitialized;
 
 	private bool m_bInitialized;
 	public static bool Initialized {
@@ -49,7 +49,7 @@ public class SteamManager : MonoBehaviour {
 		}
 		s_instance = this;
 
-		if(s_EverInialized) {
+		if(s_EverInitialized) {
 			// This is almost always an error.
 			// The most common case where this happens is when SteamManager gets destroyed because of Application.Quit(),
 			// and then some Steamworks code in some other OnDestroy gets called afterwards, creating a new SteamManager.
@@ -80,7 +80,7 @@ public class SteamManager : MonoBehaviour {
 				return;
 			}
 		}
-		catch (System.DllNotFoundException e) { // We catch this exception here, as it will be the first occurence of it.
+		catch (System.DllNotFoundException e) { // We catch this exception here, as it will be the first occurrence of it.
 			Debug.LogError("[Steamworks.NET] Could not load [lib]steam_api.dll/so/dylib. It's likely not in the correct location. Refer to the README for more details.\n" + e, this);
 
 			Application.Quit();
@@ -103,7 +103,7 @@ public class SteamManager : MonoBehaviour {
 			return;
 		}
 
-		s_EverInialized = true;
+		s_EverInitialized = true;
 	}
 
 	// This should only ever get called on first load and after an Assembly reload, You should never Disable the Steamworks Manager yourself.
@@ -117,8 +117,8 @@ public class SteamManager : MonoBehaviour {
 		}
 
 		if (m_SteamAPIWarningMessageHook == null) {
-			// Set up our callback to recieve warning messages from Steam.
-			// You must launch with "-debug_steamapi" in the launch args to recieve warnings.
+			// Set up our callback to receive warning messages from Steam.
+			// You must launch with "-debug_steamapi" in the launch args to receive warnings.
 			m_SteamAPIWarningMessageHook = new SteamAPIWarningMessageHook_t(SteamAPIDebugTextHook);
 			SteamClient.SetWarningMessageHook(m_SteamAPIWarningMessageHook);
 		}
