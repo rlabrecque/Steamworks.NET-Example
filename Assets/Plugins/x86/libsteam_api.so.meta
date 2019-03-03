@@ -1,25 +1,15 @@
 fileFormatVersion: 2
-guid: 49f26a532a9fa6142a9e114382f0f441
+guid: 4cdb7b8cd775872469690b5e9d4b5170
 PluginImporter:
   externalObjects: {}
   serializedVersion: 2
   iconMap: {}
   executionOrder: {}
+  defineConstraints: []
   isPreloaded: 0
   isOverridable: 0
+  isExplicitlyReferenced: 0
   platformData:
-  - first:
-      '': OSXIntel
-    second:
-      enabled: 1
-      settings:
-        CPU: AnyCPU
-  - first:
-      '': OSXIntel64
-    second:
-      enabled: 0
-      settings:
-        CPU: None
   - first:
       Any: 
     second:
