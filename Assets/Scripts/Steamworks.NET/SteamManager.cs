@@ -3,17 +3,17 @@
 // Where that dedication is not recognized you are granted a perpetual,
 // irrevocable license to copy and modify this file as you see fit.
 //
-// Version: 1.0.8
+// Version: 1.0.9
 
 #if UNITY_ANDROID || UNITY_IOS || UNITY_TIZEN || UNITY_TVOS || UNITY_WEBGL || UNITY_WSA || UNITY_PS4 || UNITY_WII || UNITY_XBOXONE || UNITY_SWITCH
 #define DISABLESTEAMWORKS
 #endif
 
-#if !DISABLESTEAMWORKS
-
 using UnityEngine;
+#if !DISABLESTEAMWORKS
 using System.Collections;
 using Steamworks;
+#endif
 
 //
 // The SteamManager provides a base implementation of Steamworks.NET on which you can build upon.
@@ -21,6 +21,9 @@ using Steamworks;
 //
 [DisallowMultipleComponent]
 public class SteamManager : MonoBehaviour {
+#if !DISABLESTEAMWORKS
+	protected static bool s_EverInitialized = false;
+
 	protected static SteamManager s_instance;
 	protected static SteamManager Instance {
 		get {
@@ -33,9 +36,7 @@ public class SteamManager : MonoBehaviour {
 		}
 	}
 
-	protected static bool s_EverInitialized;
-
-	protected bool m_bInitialized;
+	protected bool m_bInitialized = false;
 	public static bool Initialized {
 		get {
 			return Instance.m_bInitialized;
@@ -155,6 +156,11 @@ public class SteamManager : MonoBehaviour {
 		// Run Steam client callbacks
 		SteamAPI.RunCallbacks();
 	}
-}
-
+#else
+	public static bool Initialized {
+		get {
+			return false;
+		}
+	}
 #endif // !DISABLESTEAMWORKS
+}
