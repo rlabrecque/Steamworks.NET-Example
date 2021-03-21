@@ -2,7 +2,7 @@
 // Copyright (c) 2013-2019 Riley Labrecque
 // Please see the included LICENSE.txt for additional information.
 
-#if UNITY_ANDROID || UNITY_IOS || UNITY_TIZEN || UNITY_TVOS || UNITY_WEBGL || UNITY_WSA || UNITY_PS4 || UNITY_WII || UNITY_XBOXONE || UNITY_SWITCH
+#if !(UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
 #define DISABLESTEAMWORKS
 #endif
 
@@ -65,6 +65,9 @@ public class RedistCopy {
 		}
 
 		string pluginsDir = Path.Combine(baseDir, "Plugins");
+
+		// Create if it doesn't exist yet
+		Directory.CreateDirectory(pluginsDir);
 
 		string[] DebugInfo = {
 			"Steamworks.NET created by Riley Labrecque",
