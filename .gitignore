@@ -5,11 +5,11 @@
 /Library/
 /obj/
 /Temp/
+/Logs/
+/UserSettings/
 
 # Files
 *.csproj
 *.sln
 *.VC.db
 /steam_appid.txt
-/Assets/Editor/**/*.meta
-/Assets/Plugins/**/*.meta
