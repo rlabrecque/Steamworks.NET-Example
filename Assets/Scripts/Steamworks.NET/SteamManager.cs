@@ -3,7 +3,7 @@
 // Where that dedication is not recognized you are granted a perpetual,
 // irrevocable license to copy and modify this file as you see fit.
 //
-// Version: 1.0.12
+// Version: 1.0.13
 
 #if !(UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
 #define DISABLESTEAMWORKS
@@ -90,11 +90,15 @@ public class SteamManager : MonoBehaviour {
 		try {
 			// If Steam is not running or the game wasn't started through Steam, SteamAPI_RestartAppIfNecessary starts the
 			// Steam client and also launches this game again if the User owns it. This can act as a rudimentary form of DRM.
+			// Note that this will run which ever version you have installed in steam. Which may not be the precise executable
+			// we were currently running.
 
 			// Once you get a Steam AppID assigned by Valve, you need to replace AppId_t.Invalid with it and
 			// remove steam_appid.txt from the game depot. eg: "(AppId_t)480" or "new AppId_t(480)".
 			// See the Valve documentation for more information: https://partner.steamgames.com/doc/sdk/api#initialization_and_shutdown
 			if (SteamAPI.RestartAppIfNecessary(AppId_t.Invalid)) {
+				Debug.Log("[Steamworks.NET] Shutting down because RestartAppIfNecessary returned true. Steam will restart the application.");
+
 				Application.Quit();
 				return;
 			}
