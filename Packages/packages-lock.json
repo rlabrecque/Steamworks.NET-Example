@@ -1,11 +1,11 @@
 {
   "dependencies": {
     "com.rlabrecque.steamworks.net": {
-      "version": "https://github.com/rlabrecque/Steamworks.NET.git?path=/com.rlabrecque.steamworks.net#20.1.0",
+      "version": "https://github.com/rlabrecque/Steamworks.NET.git?path=/com.rlabrecque.steamworks.net",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "53d17180582752d7d8c9a757742da3a52dfc33d4"
+      "hash": "4a54dc77a56fa37f195e5344422cff30a2805f3c"
     },
     "com.unity.ext.nunit": {
       "version": "1.0.6",
